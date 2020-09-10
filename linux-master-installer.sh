@@ -38,6 +38,33 @@
 #
 ################################################################################
 #
+# Error [ traps ]
+#
+################################################################################
+#
+    clean_exit() {
+        local installer_files=("sub-master-installer.sh" "nodejs-installer.sh" \
+            "postgres-installer" "botconfig-setup.sh" "ormconfig-setup.sh" \
+            "postgres-open-close.sh" "download-update.sh" "linux-master-installer.sh")
+
+        if [[ $2 = "true" ]]; then echo "Cleaning up..."; else echo -e "\nCleaning up..."; fi
+        for file in "${installer_files[@]}"; do
+            if [[ -f $file ]]; then rm "$file"; fi
+        done
+
+        echo "Exiting..."
+        exit "$1"
+    }
+
+    # TODO: Figure out a way to solve the bug where this is printed x number of
+    # times, where x is the number of times the download options was used in
+    # the current section +1
+    trap "echo -e \"\n\nScript forcefully stopped\" && clean_exit \"1\" \"true\"" \
+        SIGINT SIGTSTP SIGTERM
+
+#
+################################################################################
+#
 # Checks for root privilege and working directory
 #
 ################################################################################
@@ -45,8 +72,7 @@
     # Checks to see if this script was executed with root privilege
     if ((EUID != 0)); then 
         echo "${red}Please run this script as root or with root privilege${nc}" >&2
-        echo -e "\nExiting..."
-        exit 1
+        clean_exit "1"
     fi
 
     # Changes the working directory to that of where the executed script is
@@ -55,8 +81,7 @@
         echo "${red}Failed to change working directories" >&2
         echo "${cyan}Change your working directory to the same directory of" \
             "the executed script${nc}"
-        echo -e "\nExiting..."
-        exit 1
+        clean_exit "1"
     }
 
 #
@@ -118,24 +143,22 @@
     execute_sub_master_installer(){
         supported="true"
         export pkg_mng=$1
-        echo "Downloading 'sub-master-installer.sh'..."
+        #echo "Downloading 'sub-master-installer.sh'..."
         while true; do
-            #wget https://raw.githubusercontent.com/Botler-Dev/Installer/master/$2/sub-master-installer.sh || {
-            wget https://raw.githubusercontent.com/Botler-Dev/Installer/dev/$2/sub-master-installer.sh || {
+            #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/sub-master-installer.sh || {
+            wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/sub-master-installer.sh || {
                 echo "${red}Failed to download 'sub-master-installer.sh'..." >&2
                 if ! hash wget &>/dev/null; then
                     echo "${yellow}wget is not installed${nc}"
                     echo "Installing wget..."
                     $1 install -y wget || {
                         echo "${red}Failed to install wget${nc}"
-                        echo -e "\nExiting..."
-                        exit 1
+                        clean_exit "1"
                     }
                     echo "Attempting to download 'sub-master-installer.sh'..."
                 else
                     echo "${red}Failed to download 'sub-master-installer.sh'${nc}" >&2
-                    echo -e "\nExiting..."
-                    exit 1
+                    clean_exit "1"
                 fi
             }
             break
@@ -143,10 +166,8 @@
 
         chmod +x sub-master-installer.sh && ./sub-master-installer.sh || {
             echo "${red}Failed to execute 'debian-ubuntu-installer.sh'${nc}" >&2
-            echo -e "\nExiting..."
-            exit 1
+            clean_exit "1"
         }
-        rm sub-master-installer.sh
     }
 
 #
@@ -159,9 +180,12 @@
 #
 ################################################################################
 #
+    clear
+
     detect_sys_info
     export distro sver ver arch bits codename
     export yellow green cyan red nc clrln
+    export -f clean_exit
 
     echo "SYSTEM INFO"
     echo "Bit Type: $bits"
@@ -176,7 +200,7 @@
             16.04)
                 # B.1. Forcing 64 bit architecture
                 if [[ $bits = 64 ]]; then
-                    execute_sub_master_installer "apt" "Debian-Ubuntu"
+                    execute_sub_master_installer "apt"
                 else
                     supported="false"
                 fi
@@ -184,7 +208,7 @@
             18.04)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_sub_master_installer "apt" "Debian-Ubuntu"
+                    execute_sub_master_installer "apt"
                 else
                     supported="false"
                 fi
@@ -192,7 +216,7 @@
             20.04)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_sub_master_installer "apt" "Debian-Ubuntu"
+                    execute_sub_master_installer "apt"
                 else
                     supported="false"
                 fi
@@ -206,7 +230,7 @@
             9)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_sub_master_installer "apt" "Debian-Ubuntu"
+                    execute_sub_master_installer "apt"
                 else
                     supported="false"
                 fi
@@ -214,7 +238,7 @@
             10)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_sub_master_installer "apt" "Debian-Ubuntu"
+                    execute_sub_master_installer "apt"
                 else
                     supported="false"
                 fi
@@ -228,7 +252,7 @@
             7)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_sub_master_installer "yum" "CentOS-RHEL"
+                    execute_sub_master_installer "yum"
                 else
                     supported="false"
                 fi
@@ -236,7 +260,7 @@
             8)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_sub_master_installer "dnf" "CentOS-RHEL"
+                    execute_sub_master_installer "dnf"
                 else
                     supported="false"
                 fi
@@ -252,6 +276,5 @@
     if [[ $supported = "false" ]]; then
         echo "${red}Your operating system/Linux Distribution is not supported" \
             "by the installation, setup, and/or use of Botler${nc}" >&2
-        echo -e "\nExiting..."
-        exit 1
+        clean_exit "1"
     fi
