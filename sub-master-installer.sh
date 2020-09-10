@@ -180,7 +180,7 @@
                     export botler_service
                     export botler_service_content
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
                     exec "$master_installer"
                     ;;
@@ -262,7 +262,7 @@
                     export botler_service
                     export botler_service_content
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
                     exec "$master_installer"
                     ;;
@@ -429,7 +429,7 @@
                     export botler_service
                     export botler_service_content
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
                     exec "$master_installer"
                     ;;
