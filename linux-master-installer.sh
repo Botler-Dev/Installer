@@ -120,8 +120,8 @@
         export pkg_mng=$1
         echo "Downloading 'sub-master-installer.sh'..."
         while true; do
-            #wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/master/$2/sub-master-installer.sh || {
-            wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/dev/$2/sub-master-installer.sh || {
+            #wget https://raw.githubusercontent.com/Botler-Dev/Installer/master/$2/sub-master-installer.sh || {
+            wget https://raw.githubusercontent.com/Botler-Dev/Installer/dev/$2/sub-master-installer.sh || {
                 echo "${red}Failed to download 'sub-master-installer.sh'..." >&2
                 if ! hash wget &>/dev/null; then
                     echo "${yellow}wget is not installed${nc}"
