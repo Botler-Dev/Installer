@@ -146,9 +146,9 @@
         #echo "Downloading 'sub-master-installer.sh'..."
         while true; do
             #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/sub-master-installer.sh || {
-            wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/sub-master-installer.sh || {
+            wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/sub-master-installer.sh || {
                 echo "${red}Failed to download 'sub-master-installer.sh'..." >&2
-                if ! hash wget &>/dev/null; then
+                if ! hash wget &>/tarball/null; then
                     echo "${yellow}wget is not installed${nc}"
                     echo "Installing wget..."
                     $1 install -y wget || {
