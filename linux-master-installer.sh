@@ -20,13 +20,6 @@
     nc=$'\033[0m'
     clrln=$'\r\033[K'
 
-    installer_files=(
-        "linux-master-installer.sh"
-        "sub-master-installer.sh" "nodejs-installer.sh" "postgres-installer"
-        "botconfig-setup.sh" "ormconfig-setup.sh"
-        "postgres-open-close.sh"
-    )
-
 #
 ################################################################################
 #
@@ -42,19 +35,6 @@
 
     export master_installer="/home/botler/linux-master-installer.sh"
 
-#
-################################################################################
-#
-# Error [ traps ]
-#
-################################################################################
-#
-    # TODO: Figure out a way to solve the bug where this is printed x number of
-    # times, where x is the number of times the download options was used in
-    # the current section +1
-    trap "echo -e \"\n\nScript forcefully stopped\nExiting...\" && exit" SIGINT \
-        SIGTSTP SIGTERM
-    
 #
 ################################################################################
 #
@@ -166,9 +146,7 @@
             echo -e "\nExiting..."
             exit 1
         }
-        
-        # TODO: Uncomment after a lot of testing to make sure master installer works
-        #rm sub-master-installer.sh
+        rm sub-master-installer.sh
     }
 
 #
@@ -214,7 +192,7 @@
             20.04)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_debian_ubuntu_installer "apt" "Debian-Ubuntu"
+                    execute_sub_master_installer "apt" "Debian-Ubuntu"
                 else
                     supported="false"
                 fi
@@ -228,7 +206,7 @@
             9)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_debian_ubuntu_installer "apt" "Debian-Ubuntu"
+                    execute_sub_master_installer "apt" "Debian-Ubuntu"
                 else
                     supported="false"
                 fi
@@ -236,7 +214,7 @@
             10)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_debian_ubuntu_installer "apt" "Debian-Ubuntu"
+                    execute_sub_master_installer "apt" "Debian-Ubuntu"
                 else
                     supported="false"
                 fi
@@ -250,7 +228,7 @@
             7)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_centos_rhel_installer "yum" "CentOS-RHEL"
+                    execute_sub_master_installer "yum" "CentOS-RHEL"
                 else
                     supported="false"
                 fi
@@ -258,7 +236,7 @@
             8)
                 # B.1.
                 if [[ $bits = 64 ]]; then
-                    execute_centos_rhel_installer "dnf" "CentOS-RHEL"
+                    execute_sub_master_installer "dnf" "CentOS-RHEL"
                 else
                     supported="false"
                 fi
