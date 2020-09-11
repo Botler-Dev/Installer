@@ -44,7 +44,7 @@
 #
     clean_exit() {
         local installer_files=("sub-master-installer.sh" "nodejs-installer.sh" \
-            "postgres-installer" "botconfig-setup.sh" "ormconfig-setup.sh" \
+            "postgres-installer.sh" "botconfig-setup.sh" "ormconfig-setup.sh" \
             "postgres-open-close.sh" "download-update.sh" "linux-master-installer.sh")
 
         if [[ $2 = "true" ]]; then echo "Cleaning up..."; else echo -e "\nCleaning up..."; fi
@@ -146,9 +146,9 @@
         #echo "Downloading 'sub-master-installer.sh'..."
         while true; do
             #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/sub-master-installer.sh || {
-            wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/sub-master-installer.sh || {
+            wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/sub-master-installer.sh || {
                 echo "${red}Failed to download 'sub-master-installer.sh'..." >&2
-                if ! hash wget &>/tarball/null; then
+                if ! hash wget &>/dev/null; then
                     echo "${yellow}wget is not installed${nc}"
                     echo "Installing wget..."
                     $1 install -y wget || {
