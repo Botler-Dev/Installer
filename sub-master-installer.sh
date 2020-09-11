@@ -14,23 +14,22 @@
 ################################################################################
 #
     home="/home/botler"
+    bottius_root_dir="/home/botler/Botler"
     botler_service="/lib/systemd/system/botler.service"
     # Contains all of the files/directories that are associated with Botler
     # (only files/directories located in the Botler root directory)
     # TODO: Current files in root dir may change
-    files=("linuxPMI.sh" "linux-master-installer.sh" "package-lock.json" \
-        "package.json" "tsconfig.json" "src/" "media/" "README.md" "out/" \
-        "mkdocs.yml" "mkdocs-requirements.txt" ".gitignore/" "docs/" \
-        ".github" "CODE_OF_CONDUCT.md" "CONTRIBUTING.md" "LICENSE")
+    files=("linuxPMI.sh" "linux-master-installer.sh" "sub-master-installer.sh" \
+        "Botler" "Botler.old")
     botler_service_content="[Unit] \
         \nDescription=Starts Botler after a crash or system reboot \
         \nAfter=network.target postgresql-12.service  \
         \n  \
         \n[Service]  \
         \nUser=botler  \
-        \nWorkingDirectory=$home \
+        \nWorkingDirectory=$bottius_root_dir \
         \nExecStart=/usr/bin/node out/main.js \
-        \n#ExecStart=/usr/bin/node $home/out/main.js  \
+        \n#ExecStart=/usr/bin/node $bottius_root_dir/out/main.js  \
         \nRestart=always  \
         \nRestartSec=3  \
         \nStandardOutput=syslog  \
@@ -50,12 +49,11 @@
     # Changes ownership of new files so that they are owned by the botler
     # system user
     change_ownership() {
-        echo "Changing ownership of the file(s) added to '/home/botler'..."
+        echo "Changing ownership of the file(s) added to '$home'..."
         chown botler:botler -R "$home"
         cd "$home" || {
-            echo "${red}Failed to change working directory to" \
-                "'/home/botler'" >&2
-            echo "${cyan}Change your working directory to '/home/botler'${nc}"
+            echo "${red}Failed to change working directory to '$home'" >&2
+            echo "${cyan}Change your working directory to '$home'${nc}"
             clean_exit "1" 
         }
     }
@@ -118,7 +116,7 @@
                         "continue${nc}"
                     clean_exit "1"
                 }
-                echo "Changing permissions of '/home/botler'..."
+                echo "Changing permissions of '$home'..."
                 # Permissions for the home directory need to be changed, else an
                 # error will be produced when trying to install the 'node_module'
                 chmod 755 "$home"
@@ -143,7 +141,7 @@
             change_ownership
         fi
 
-        if [[ $PWD != "/home/botler" ]]; then
+        if [[ $PWD != "$home" ]]; then
             move_to_home
             change_ownership
         fi   
@@ -166,7 +164,7 @@
         # starting Botler in different run modes
         ########################################################################
         # Checks to see if it is necessary to download Botler
-        if [[ ! -d src && ! -d out ]]; then
+        if [[ ! -d Botler/src && ! -d Botler/out ]]; then
             echo "${cyan}Botler is not downloaded. To continue," \
                 "please download Botler via option 1.${nc}"
 
@@ -176,7 +174,6 @@
             case "$option" in
                 1)
                     export home
-                    export files
                     export botler_service
                     export botler_service_content
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
@@ -188,7 +185,7 @@
                     clean_exit "0"
                     ;;
                 *)
-                    clear
+                    clear -x
                     echo "${red}Invalid input: '$option' is not a valid" \
                         "option${nc}" >&2
                     continue
@@ -197,8 +194,8 @@
         # If any of the prerequisites are not installed or set up, the user will
         # be required to install them using the options below
         elif (! hash psql || ! hash node || ! hash npm || [[ ! $database_exist ||
-                ! $database_user_exist || ! -f out/botconfig.json || ! -f \
-                ormconfig.json || ! -d node_modules ]] ||
+                ! $database_user_exist || ! -f Botler/out/botconfig.json || ! -f \
+                Botler/ormconfig.json || ! -d Botler/node_modules ]] ||
                 ! $pgsql_auth_type) &>/dev/null; then # $pgsql_auth_type -> CentOS/RHEL
             echo "${cyan}Some or all of the prerequisites are not installed." \
                 "Until they are all installed and set up, all options to run" \
@@ -219,7 +216,7 @@
                     "option 4) ${green}(Already installed)${nc}"
             fi
 
-            if [[ ! -d node_modules ]] &>/dev/null; then
+            if [[ ! -d Botler/node_modules ]] &>/dev/null; then
                 echo "4. Install required packages and dependencies" \
                     "${red}(Already installed)${nc}"
             else
@@ -227,19 +224,19 @@
                     "${green}(Already installed)${nc}"
             fi
 
-            if [[ ! -f src/botconfig.json ]]; then
+            if [[ ! -f Botler/src/botconfig.json ]]; then
                 echo "5. Set up botconfig.json ${red}(Not setup)${nc}"
             else
                 echo "5. Set up botconfig.json ${green}(Already setup)${nc}"
             fi
 
-            if [[ ! -f ormconfig.json ]]; then
+            if [[ ! -f Botler/ormconfig.json ]]; then
                 echo "6. Set up ormconfig.json ${red}(Not setup)${nc}"
             else
                 echo "6. Set up ormconfig.json ${green}(Already setup)${nc}"
             fi
 
-            if [[ ! -d out ]]; then
+            if [[ ! -d Botler/out ]]; then
                 echo "7. Compile code ${red}(Not compiled)${nc}"
             else
                 echo "7. Compile code ${green}(Already compiled)${nc}"
@@ -258,7 +255,6 @@
             case "$option" in
                 1)
                     export home
-                    export files
                     export botler_service
                     export botler_service_content
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
@@ -267,32 +263,42 @@
                     exec "$master_installer"
                     ;;
                 2)
+                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/postgres-installer.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/postgres-installer.sh
                     bash postgres-installer.sh
-                    clear
+                    clear -x
                     ;;
                 3)
                     export option
-                    bash odejs-installer.sh
-                    clear
+                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/nodejs-installer.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/nodejs-installer.sh
+                    bash nodejs-installer.sh
+                    clear -x
                     ;;
                 4)
                     export option
+                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/nodejs-installer.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/nodejs-installer.sh
                     bash nodejs-installer.sh
-                    clear
+                    clear -x
                     ;;
                 5)
                     export botler_service_status
+                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/botconfig-setup.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/botconfig-setup.sh
                     bash botconfig-setup.sh
-                    clear
+                    clear -x
                     ;;
                 6)
                     export botler_service_status
+                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/ormconfig-setup.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/ormconfig-setup.sh
                     bash ormconfig-setup.sh
-                    clear
+                    clear -x
                     ;;
                 7)
-                    clear
-                    if [[ ! -f src/botconfig.json ]]; then
+                    clear -x
+                    if [[ ! -f Botler/src/botconfig.json ]]; then
                         echo "${yellow}'botconfig.json' doesn't exist. Before" \
                             "compiling the code, create 'botconfig.json' via" \
                             "option 5 on the installer menu.${nc}"
@@ -305,7 +311,7 @@
                     tsc || {
                         echo "${red}Failed to compile code${nc}" >&2
                         read -p "Press [Enter] to return to the installer menu"
-                        clear
+                        clear -x
                         continue
                     }
 
@@ -313,10 +319,10 @@
                         "causing them, then attempt to compile the code again\n${nc}"
 
                     read -p "Press [Enter] to return to the installer menu"
-                    clear
+                    clear -x
                     ;;
                 8)
-                    clear
+                    clear -x
                     if ! hash psql &>/dev/null; then
                         echo "${yellow}Postgres is not installed. Postgres" \
                             "must be installed before it can be configured.${nc}"
@@ -333,7 +339,7 @@
                             echo "${red}Failed to create the database user" \
                                 "'Botler'${nc}" >&2
                             read -p "Press [Enter] to return to the installer menu"
-                            clear
+                            clear -x
                             continue
                         }
                     fi
@@ -344,7 +350,7 @@
                     else
                         sudo -u postgres -H sh -c "createdb -O Botler Botler_DB" || {
                             echo "${red}Failed to create a database for Botler${nc}" >&2
-                            create_failed=true
+                            create_failed="true"
                         }
                     fi
 
@@ -372,13 +378,13 @@
                         echo -e "\n"
                     fi
                     read -p "Press [Enter] to return to the installer menu"
-                    clear
+                    clear -x
                     ;;
                 9)
                     clean_exit "0"
                     ;;
                 *)
-                    clear
+                    clear -x
                     echo "${red}Invalid input: '$option' is not a valid" \
                         "option${nc}" >&2
                     continue
@@ -425,7 +431,6 @@
             case "$option" in
                 1)
                     export home
-                    export files
                     export botler_service
                     export botler_service_content
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
@@ -435,34 +440,34 @@
                     ;;
                 2)
                     export home
-                    export files
                     export botler_service_status
                     export botler_service_startup
-                    bash installers/Linux_Universal/b-start-modes/run-in-background.sh
-                    clear
+                    # TODO: Put code here
+                    clear -x
                     ;;
                 3)
                     export home
-                    export files
                     export botler_service_status
                     export botler_service_startup
-                    bash installers/Linux_Universal/b-start-modes/run-in-background-auto-restart.sh
-                    clear
+                    # TODO: Put code here
+                    clear -x
                     ;;
                 4)
                     export botler_service_status
-                    bash installers/Linux_Universal/b-stop.sh
-                    clear
+                    # TODO: Put code here
+                    clear -x
                     ;;
                 5)
-                    bash installers/Linux_Universal/postgres-open-close.sh
-                    clear
+                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/postgres-open-close.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/postgres-open-close.sh
+                    postgres-open-close.sh
+                    clear -x
                     ;;
                 6)
                     clean_exit "0"
                     ;;
                 *)
-                    clear
+                    clear -x
                     echo "${red}Invalid input: '$option' is not a valid" \
                         "option${nc}" >&2
                     continue

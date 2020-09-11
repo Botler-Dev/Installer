@@ -180,7 +180,7 @@
 #
 ################################################################################
 #
-    clear
+    clear -x
 
     detect_sys_info
     export distro sver ver arch bits codename

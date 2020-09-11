@@ -29,14 +29,15 @@
     # Cleans up any loose ends/left over files
     clean_up() {
         echo "Cleaning up files and directories..."
-        if [[ -d tmp ]]; then rm -r tmp; fi
+        if [[ -d tmp ]]; then rm -rf tmp; fi
+        if [[ -f $tag ]]; then rm "$tag"; fi
+        if [[ -d Botler ]]; then rm -rf Botler; fi
 
-        if [[ ! -d src || ! -f package-lock.json || ! -f package.json ]]; then
-            echo "Restoring from 'Old_Botler/${old_botler}'"
-            cp -rf Old_Botler/"$old_botler"/* . && cp -rf Old_Botler/"$old_botler"/.* . || {
-                echo "${red}Failed to restore from 'Old_Botler'${nc}" >&2
-            }
-        fi
+        echo "Restoring from 'Botler.bak'"
+        mv -f Botler.bak Botler || {
+            echo "${red}Failed to restore from 'Botler.old'" >&2
+            echo "${cyan} Manually rename 'Botler.old' to 'Botler'${nc}"
+        }
 
         echo "Changing ownership of the file(s) in '/home/botler'..."
         chown botler:botler -R "$home"
@@ -49,13 +50,10 @@
 #
 ################################################################################
 #
-    clear
+    clear -x
     printf "We will now download/update Botler. "
     read -p "Press [Enter] to begin."
     
-    old_botler=$(date)
-    repo="https://github.com/Botler-Dev/Botler/"
-
 
     ############################################################################
     # Error trapping
@@ -87,7 +85,6 @@
     ############################################################################
     required_software "curl"
     required_software "wget"
-    required_software "git"
     required_software "gpg2" "gnupg2"
 
 
@@ -95,67 +92,92 @@
     # Creating backups of current code in '/home/botler' then downloads/
     # updates Botler
     ############################################################################
-    if [[ ! -d Old_Botler ]]; then
-        echo "Creating 'Old_Botler/'..."
-        mkdir Old_Botler
+    #tag=$(curl -s https://api.github.com/repos/Botler-Dev/Botler/releases/latest \
+    #        | grep -oP '"tag_name": "\K(.*)(?=")')
+    #local latest_release="https://github.com/Botler-Dev/Botler/tarball/${tag}"
+    tag=$(curl -s https://api.github.com/repos/CodeBullet-Community/BulletBot/releases/latest \
+            | grep -oP '"tag_name": "\K(.*)(?=")')
+    latest_release="https://github.com/CodeBullet-Community/BulletBot/tarball/${tag}"
+
+    # Makes sure that any changes to 'Botler/out/botconfig.json' by the user, are
+    # made to 'Botler/src/botconfig.json' so when the code is compiled, the
+    # changes will be passed on to the new 'Botler/out/botconfig.json'
+    if [[ -f Botler/out/botconfig.json ]]; then
+        cat Botler/out/botconfig.json > Botler/src/botconfig.json
     fi
 
-    echo "Creating 'Old_Botler/${old_botler}'..."
-    mkdir Old_Botler/"$old_botler"
-    # Makes sure that any changes to 'out/botconfig.json' by the user, are
-    # made to 'src/botconfig.json' so when the code is compiled, the
-    # changes will be passed on to the new 'out/botconfig.json'
-    if [[ -f out/botconfig.json ]]; then
-        cat out/botconfig.json > src/botconfig.json
-    fi
-
-    echo "Backing up code to 'Old_Botler/${old_botler}'..."
-    for dir in "${files[@]}"; do
-        if [[ -d $dir || -f $dir ]]; then
-            cp -rf "$dir" Old_Botler/"$old_botler" || {
-                echo "${red}Failed to backup the code to 'Old_Botler/${old_botler}'${nc}" >&2
+    # Saves botconfig.json (if it exists) to a temporary directory
+    if [[ -f Botler/src/botconfig.json ]]; then
+        if [[ ! -d tmp ]]; then
+            mkdir tmp || {
+                echo "Failed to create 'tmp/'" >&2
+                echo "${cyan}Please create it manually before continuing${nc}"
+                clean_exit "1"
             }
         fi
-    done
-    
-    if [[ -d .git ]]; then
-        git checkout -- \*
-        git pull || {
-            echo "${red}Failed to update Botler${nc}" >&2
-            echo "${cyan}Forcefully resetting changes may resolve" \
-                "the issue that is occuring: 'git fetch --all && git reset" \
-                "--hard origin/release'${nc}" 
-            clean_up
-            clean_exit "1" 
+
+        cp Botler/src/botconfig.json tmp/ || {
+            echo "${red}Failed to copy 'botconfig.json' to 'tmp/'" >&2
+            echo "${cyan}Please copy it manually before continuing${nc}"
+            clean_exit "1"
         }
-    else
-        echo "Downloading Botler..."
-        #git clone --single-branch -b release "$repo" tmp || {
-        git clone --single-branch -b master "$repo" tmp || {
-            echo "${red}Failed to download Botler${nc}" >&2
-            clean_up
-            clean_exit "1" 
-        }
-        mv -f tmp/* . && mv -f tmp/.git* . || {
-            echo "${red}Failed to move updated code from 'tmp/' to ." >&2
-            echo "${cyan}Manually move all the files from tmp to .${nc}"
-            clean_exit "1" 
-        }
-        rm -rf tmp
     fi
+
+    if [[ -d Botler ]]; then
+        echo "Backing up Botler as Botler.bak..."
+        mv -f Botler Botler.bak || {
+            echo "${red}Failed to back up Botler${nc}" >&2
+            clean_exit "1"
+        }
+    fi
+
+    echo "Downloading latest release..."
+    wget -N "$latest_release" || {
+        echo "${red}Failed to download the latest release" >&2
+        echo "${cyan}Either resolve the issue (recommended) or download" \
+            "the latest release from github${nc}"
+        clean_up
+        echo -e "\nExiting..."
+        exit 1
+    }
     
+    echo "Untarring '$tag'..."    
+    #tar -zxf "$tag" && mv Botler-Dev-Botler-* Botler || {
+    tar -zxf "$tag" && mv CodeBullet-Community-BulletBot-* Botler || {
+        echo "${red}Failed to unzip '$tag'" >&2
+        clean_up
+        echo -e "\nExiting..."
+        exit 1
+    }
+    echo "Removing '$tag'..."
+    rm "$tag" 2>/dev/null || echo "${red}Failed to remove" \
+        "'$tag'${nc}" >&2
+    
+    if [[ -f tmp/botconfig.json ]]; then
+        cp -f tmp/botconfig.json Botler/out/ && rm -rf tmp/ || {
+            echo "${red}Failed to move 'botconfig.json' to 'Botler/out/'" >&2
+            echo "${yellow}Before starting BulletBot, you will have to" \
+                "manually move 'botconfig.json' from 'tmp/' to 'Botler/out/'${nc}"
+        }
+    fi
+
     # Checks if it's possible to compile code
-    if (! hash tsc || ! hash node) &>/dev/null || [[ ! -f src/botconfig.json ]]; then
+    if (! hash tsc || ! hash node) &>/dev/null || [[ ! -f Botler/src/botconfig.json ]]; then
         echo "Skipping typescript compilation..."
     else
         echo "Compiling code..."
         tsc || {
             echo "${red}Failed to compile code${nc}" >&2
-            clean_exit "1" 
+            clean_up
+            echo -e "\nExiting..."
+            exit 1
         }
         echo -e "\n${cyan}If there are any errors, resolve whatever issue" \
             "is causing them, then attempt to compile the code again\n${nc}"
     fi
+
+    if [[ -d Botler.old ]]; then rm -rf Botler.old; fi
+    mv -f Botler.bak Botler.old
 
     if [[ -f $botler_service ]]; then
         echo "Updating 'botler.service'..."
@@ -190,4 +212,3 @@
     fi
 
     read -p "Press [Enter] to apply any existing changes to the installers"
-    #clear
