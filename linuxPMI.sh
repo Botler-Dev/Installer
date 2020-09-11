@@ -9,7 +9,7 @@ fi
 
 echo "Downloading 'linux-master-installer.sh'..."
 #wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/master/linux-master-installer.sh || {
-wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/tarball/linux-master-installer.sh || {
+wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/dev/linux-master-installer.sh || {
     echo "Failed to download 'linux-master-installer.sh'..." >&2
     echo -e "\nExiting..."
     exit 1
