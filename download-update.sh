@@ -179,8 +179,11 @@
             "is causing them, then attempt to compile the code again\n${nc}"
     fi
 
-    if [[ -d Botler.old ]]; then rm -rf Botler.old; fi
-    mv -f Botler.bak Botler.old
+    if [[ -d Botler.old && -d Botler.bak ]]; then
+    # TODO: Add error handling???
+        rm -rf Botler.old
+        mv -f Botler.bak Botler.old
+    fi
 
     if [[ -f $botler_service ]]; then
         echo "Updating 'botler.service'..."
