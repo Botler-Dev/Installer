@@ -54,7 +54,7 @@
         cd "$home" || {
             echo "${red}Failed to change working directory to '$home'" >&2
             echo "${cyan}Change your working directory to '$home'${nc}"
-            clean_exit "1" 
+            clean_exit "1" "Exiting" 
         }
     }
 
@@ -114,7 +114,7 @@
                     echo "${red}Failed to create 'botler'" >&2
                     echo "${cyan}System user 'botler' must exist in order to" \
                         "continue${nc}"
-                    clean_exit "1"
+                    clean_exit "1" "Exiting"
                 }
                 echo "Changing permissions of '$home'..."
                 # Permissions for the home directory need to be changed, else an
@@ -125,7 +125,7 @@
                     echo "${red}Failed to create 'botler'" >&2
                     echo "${cyan}System user 'botler' must exist in order to" \
                         "continue${nc}"
-                    clean_exit "1" 
+                    clean_exit "1" "Exiting"
                 }
             fi
 
@@ -152,7 +152,7 @@
             echo -e "$botler_service_content" > "$botler_service" || {
                 echo "${red}Failed to create 'botler.service'" >&2
                 echo "${cyan}This service must exist for Botler to work${nc}"
-                clean_exit "1" 
+                clean_exit "1" "Exiting"
             }
             # Reloads systemd daemons to account for the added service
             systemctl daemon-reload
@@ -182,7 +182,7 @@
                     exec "$master_installer"
                     ;;
                 2)
-                    clean_exit "0"
+                    clean_exit "0" "Exiting"
                     ;;
                 *)
                     clear -x
@@ -381,7 +381,7 @@
                     clear -x
                     ;;
                 9)
-                    clean_exit "0"
+                    clean_exit "0" "Exiting"
                     ;;
                 *)
                     clear -x
@@ -464,7 +464,7 @@
                     clear -x
                     ;;
                 6)
-                    clean_exit "0"
+                    clean_exit "0" "Exiting"
                     ;;
                 *)
                     clear -x

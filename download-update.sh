@@ -21,7 +21,8 @@
             apt -y install "$1" || apt -y install $2 || {
                 echo "${red}Failed to install $1" >&2
                 echo "${cyan}${1} must be installed to continue${nc}"
-                clean_exit "1" 
+                echo -e "\nPress [Enter] to return to the installer menu"
+                clean_exit "1" "Returning to the installer menu"
             }
         fi
     }
@@ -112,14 +113,16 @@
             mkdir tmp || {
                 echo "Failed to create 'tmp/'" >&2
                 echo "${cyan}Please create it manually before continuing${nc}"
-                clean_exit "1"
+                echo -e "\nPress [Enter] to return to the installer menu"
+                clean_exit "1" "Returning to the installer menu"
             }
         fi
 
         cp Botler/src/botconfig.json tmp/ || {
             echo "${red}Failed to copy 'botconfig.json' to 'tmp/'" >&2
             echo "${cyan}Please copy it manually before continuing${nc}"
-            clean_exit "1"
+            echo -e "\nPress [Enter] to return to the installer menu"
+            clean_exit "1" "Returning to the installer menu"
         }
     fi
 
@@ -127,7 +130,8 @@
         echo "Backing up Botler as Botler.bak..."
         mv -f Botler Botler.bak || {
             echo "${red}Failed to back up Botler${nc}" >&2
-            clean_exit "1"
+            echo -e "\nPress [Enter] to return to the installer menu"
+            clean_exit "1" "Returning to the installer menu"
         }
     fi
 

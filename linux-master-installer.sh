@@ -47,20 +47,20 @@
             "postgres-installer.sh" "botconfig-setup.sh" "ormconfig-setup.sh" \
             "postgres-open-close.sh" "download-update.sh" "linux-master-installer.sh")
 
-        if [[ $2 = "true" ]]; then echo "Cleaning up..."; else echo -e "\nCleaning up..."; fi
+        if [[ $3 = "true" ]]; then echo "Cleaning up..."; else echo -e "\nCleaning up..."; fi
         for file in "${installer_files[@]}"; do
             if [[ -f $file ]]; then rm "$file"; fi
         done
 
-        echo "Exiting..."
+        echo "${2}..."
         exit "$1"
     }
 
     # TODO: Figure out a way to solve the bug where this is printed x number of
     # times, where x is the number of times the download options was used in
     # the current section +1
-    trap "echo -e \"\n\nScript forcefully stopped\" && clean_exit \"1\" \"true\"" \
-        SIGINT SIGTSTP SIGTERM
+    trap "echo -e \"\n\nScript forcefully stopped\" && clean_exit \"1\" \"Exiting\" \
+        \"true\"" SIGINT SIGTSTP SIGTERM
 
 #
 ################################################################################
@@ -72,7 +72,7 @@
     # Checks to see if this script was executed with root privilege
     if ((EUID != 0)); then 
         echo "${red}Please run this script as root or with root privilege${nc}" >&2
-        clean_exit "1"
+        clean_exit "1" "Exiting"
     fi
 
     # Changes the working directory to that of where the executed script is
@@ -81,7 +81,7 @@
         echo "${red}Failed to change working directories" >&2
         echo "${cyan}Change your working directory to the same directory of" \
             "the executed script${nc}"
-        clean_exit "1"
+        clean_exit "1" "Exiting"
     }
 
 #
@@ -145,20 +145,21 @@
         export pkg_mng=$1
         #echo "Downloading 'sub-master-installer.sh'..."
         while true; do
-            #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/sub-master-installer.sh || {
-            wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/sub-master-installer.sh || {
+            #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/release/latest/sub-master-installer.sh || { # Latest release branch
+            #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/sub-master-installer.sh || { # Working dev branch
+            wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/sub-master-installer.sh || { # Dev branch
                 echo "${red}Failed to download 'sub-master-installer.sh'..." >&2
                 if ! hash wget &>/dev/null; then
                     echo "${yellow}wget is not installed${nc}"
                     echo "Installing wget..."
                     $1 install -y wget || {
                         echo "${red}Failed to install wget${nc}"
-                        clean_exit "1"
+                        clean_exit "1" "Exiting"
                     }
                     echo "Attempting to download 'sub-master-installer.sh'..."
                 else
                     echo "${red}Failed to download 'sub-master-installer.sh'${nc}" >&2
-                    clean_exit "1"
+                    clean_exit "1" "Exiting"
                 fi
             }
             break
@@ -166,7 +167,7 @@
 
         chmod +x sub-master-installer.sh && ./sub-master-installer.sh || {
             echo "${red}Failed to execute 'debian-ubuntu-installer.sh'${nc}" >&2
-            clean_exit "1"
+            clean_exit "1" "Exiting"
         }
     }
 
@@ -276,5 +277,5 @@
     if [[ $supported = "false" ]]; then
         echo "${red}Your operating system/Linux Distribution is not supported" \
             "by the installation, setup, and/or use of Botler${nc}" >&2
-        clean_exit "1"
+        clean_exit "1" "Exiting"
     fi
