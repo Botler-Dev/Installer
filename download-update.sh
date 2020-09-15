@@ -179,7 +179,7 @@
             "is causing them, then attempt to compile the code again\n${nc}"
     fi
 
-    if [[ -d Botler.old && -d Botler.bak ]]; then
+    if [[ -d Botler.old && -d Botler.bak || ! -d Botler.old && -d Botler.bak ]]; then
     # TODO: Add error handling???
         rm -rf Botler.old
         mv -f Botler.bak Botler.old

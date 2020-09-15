@@ -218,7 +218,7 @@
 
             if [[ ! -d Botler/node_modules ]] &>/dev/null; then
                 echo "4. Install required packages and dependencies" \
-                    "${red}(Already installed)${nc}"
+                    "${red}(Not installed)${nc}"
             else
                 echo "4. Install required packages and dependencies" \
                     "${green}(Already installed)${nc}"
