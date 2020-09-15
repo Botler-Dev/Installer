@@ -18,7 +18,7 @@
         if ! hash "$1" &>/dev/null; then
             echo "${yellow}${1} is not installed${nc}"
             echo "Installing ${1}..."
-            apt -y install "$1" || apt -y install $2 || {
+            apt -y install "$1" || {
                 echo "${red}Failed to install $1" >&2
                 echo "${cyan}${1} must be installed to continue${nc}"
                 echo -e "\nPress [Enter] to return to the installer menu"
@@ -86,7 +86,6 @@
     ############################################################################
     required_software "curl"
     required_software "wget"
-    required_software "gpg2" "gnupg2"
 
 
     ############################################################################
