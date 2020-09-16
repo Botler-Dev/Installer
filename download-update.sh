@@ -29,10 +29,17 @@
 
     # Cleans up any loose ends/left over files
     clean_up() {
+        local installer_files=("sub-master-installer.sh" "nodejs-installer.sh"
+            "postgres-installer.sh" "botconfig-setup.sh" "ormconfig-setup.sh"
+            "postgres-open-close.sh" "download-update.sh" "linux-master-installer.sh")
+
         echo "Cleaning up files and directories..."
         if [[ -d tmp ]]; then rm -rf tmp; fi
         if [[ -f $tag ]]; then rm "$tag"; fi
         if [[ -d Botler ]]; then rm -rf Botler; fi
+        for file in "${installer_files[@]}"; do
+            if [[ -f $file ]]; then rm "$file"; fi
+        done
 
         echo "Restoring from 'Botler.bak'"
         mv -f Botler.bak Botler || {
@@ -60,8 +67,14 @@
     # Error trapping
     ############################################################################
     # TODO: Test more and maybe modify
-    trap "echo -e \"\n\nScript forcefully stopped\" && clean_up; echo \
-        \"Exiting...\" && exit" SIGINT SIGTERM SIGTSTP
+    trap "echo -e \"\n\nScript forcefully stopped\"
+        clean_up
+        echo \"Killing parent processes...\"
+        kill -9 \"$_SUB_MASTER_INSTALLER_PID\" \"$_MASTER_INSTALLER_PID\"
+        wait \"$_SUB_MASTER_INSTALLER_PID\" \"$_MASTER_INSTALLER_PID\" 2>/dev/null
+        echo \"Exiting...\"
+        exit 1" \
+        SIGINT SIGTSTP SIGTERM
 
 
     ############################################################################

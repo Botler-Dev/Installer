@@ -9,6 +9,15 @@
 #
 ################################################################################
 #
+# Exported [ variables ]
+#
+################################################################################
+#
+    export _SUB_MASTER_INSTALLER_PID=$$
+
+#
+################################################################################
+#
 # Global [ variables ]
 #
 ################################################################################
@@ -19,7 +28,7 @@
     # Contains all of the files/directories that are associated with Botler
     # (only files/directories located in the Botler root directory)
     # TODO: Current files in root dir may change
-    files=("linuxPMI.sh" "linux-master-installer.sh" "sub-master-installer.sh" \
+    files=("linuxPMI.sh" "linux-master-installer.sh" "sub-master-installer.sh"
         "Botler" "Botler.old")
     botler_service_content="[Unit] \
         \nDescription=Starts Botler after a crash or system reboot \
@@ -179,7 +188,7 @@
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$master_installer"
+                    exec "$_MASTER_INSTALLER"
                     ;;
                 2)
                     clean_exit "0" "Exiting"
@@ -260,7 +269,7 @@
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$master_installer"
+                    exec "$_MASTER_INSTALLER"
                     ;;
                 2)
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/postgres-installer.sh
@@ -436,7 +445,7 @@
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$master_installer"
+                    exec "$_MASTER_INSTALLER"
                     ;;
                 2)
                     export home

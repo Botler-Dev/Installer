@@ -23,17 +23,18 @@
 #
 ################################################################################
 #
-# [ Variables ] exported and used only outside of the master installer
+# Exported [ variables ]
 #
 ################################################################################
 #
     # The '--no-hostname' flag for journalctl only works with systemd 230 and
     # later
     if (($(journalctl --version | grep -oP "[0-9]+" | head -1) >= 230)); then
-        export no_hostname="--no-hostname"
+        export _NO_HOSTNAME="--no-hostname"
     fi
 
-    export master_installer="/home/botler/linux-master-installer.sh"
+    export _MASTER_INSTALLER="/home/botler/linux-master-installer.sh"
+    export _MASTER_INSTALLER_PID=$$
 
 #
 ################################################################################
@@ -43,8 +44,8 @@
 ################################################################################
 #
     clean_exit() {
-        local installer_files=("sub-master-installer.sh" "nodejs-installer.sh" \
-            "postgres-installer.sh" "botconfig-setup.sh" "ormconfig-setup.sh" \
+        local installer_files=("sub-master-installer.sh" "nodejs-installer.sh"
+            "postgres-installer.sh" "botconfig-setup.sh" "ormconfig-setup.sh"
             "postgres-open-close.sh" "download-update.sh" "linux-master-installer.sh")
 
         if [[ $3 = "true" ]]; then echo "Cleaning up..."; else echo -e "\nCleaning up..."; fi
@@ -59,8 +60,9 @@
     # TODO: Figure out a way to solve the bug where this is printed x number of
     # times, where x is the number of times the download options was used in
     # the current section +1
-    trap "echo -e \"\n\nScript forcefully stopped\" && clean_exit \"1\" \"Exiting\" \
-        \"true\"" SIGINT SIGTSTP SIGTERM
+    trap "echo -e \"\n\nScript forcefully stopped\"
+        clean_exit \"1\" \"Exiting\" \"true\"" \
+        SIGINT SIGTSTP SIGTERM
 
 #
 ################################################################################
