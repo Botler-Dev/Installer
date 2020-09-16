@@ -35,7 +35,7 @@
 
         echo "Cleaning up files and directories..."
         if [[ -d tmp ]]; then rm -rf tmp; fi
-        if [[ -f $tag ]]; then rm "$tag"; fi
+        if [[ -f $botler_version ]]; then rm "$botler_version"; fi
         if [[ -d Botler ]]; then rm -rf Botler; fi
         for file in "${installer_files[@]}"; do
             if [[ -f $file ]]; then rm "$file"; fi
@@ -50,6 +50,11 @@
 
             echo "Changing ownership of the file(s) in '/home/botler'..."
             chown botler:botler -R "$home"
+        fi
+
+        if [[ $1 = "true" ]]; then
+            echo "Killing parent processes..."
+            kill -9 "$sub_master_installer_pid" "$master_installer_pid"
         fi
     }
 
@@ -155,7 +160,7 @@
         echo "${red}Failed to download the latest release" >&2
         echo "${cyan}Either resolve the issue (recommended) or download" \
             "the latest release from github${nc}"
-        clean_up
+        clean_up "true"
         echo -e "\nExiting..."
         exit 1
     }
@@ -164,7 +169,7 @@
     #tar -zxf "$tag" && mv Botler-Dev-Botler-* Botler || {
     tar -zxf "$tag" && mv CodeBullet-Community-BulletBot-* Botler || {
         echo "${red}Failed to unzip '$tag'" >&2
-        clean_up
+        clean_up "true"
         echo -e "\nExiting..."
         exit 1
     }
@@ -187,7 +192,7 @@
         echo "Compiling code..."
         tsc || {
             echo "${red}Failed to compile code${nc}" >&2
-            clean_up
+            clean_up "true"
             echo -e "\nExiting..."
             exit 1
         }
