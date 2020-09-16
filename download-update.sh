@@ -66,12 +66,11 @@
     ############################################################################
     # Error trapping
     ############################################################################
-    # TODO: Test more and maybe modify
+    # TODO: Figure out how to silently kill a process
     trap "echo -e \"\n\nScript forcefully stopped\"
         clean_up
         echo \"Killing parent processes...\"
         kill -9 \"$_SUB_MASTER_INSTALLER_PID\" \"$_MASTER_INSTALLER_PID\"
-        wait \"$_SUB_MASTER_INSTALLER_PID\" \"$_MASTER_INSTALLER_PID\" 2>/dev/null
         echo \"Exiting...\"
         exit 1" \
         SIGINT SIGTSTP SIGTERM
