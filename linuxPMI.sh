@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# TODO: Make comment on purpouse of this variable
+export linuxPMI_revision="3"
+export _LINUXPMI="/home/bolter/linuxPMI.sh"
+
 # Checks to see if this script was executed with root privilege
 if ((EUID != 0)); then 
     echo "Please run this script as root or with root privilege" >&2

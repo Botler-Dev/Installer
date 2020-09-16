@@ -9,7 +9,7 @@
 #
 ################################################################################
 #
-# [ Variables ] used outside of this script and/or globally
+# Exported and/or globally used [ variables ]
 #
 ################################################################################
 #
@@ -19,11 +19,12 @@
     red=$'\033[1;31m'
     nc=$'\033[0m'
     clrln=$'\r\033[K'
+    current_linuxPMI_revision="3"
 
 #
 ################################################################################
 #
-# Exported [ variables ]
+# Exported only [ variables ]
 #
 ################################################################################
 #
@@ -67,6 +68,28 @@
 #
 ################################################################################
 #
+# Makes sure that linuxPMI.sh is up to date
+#
+################################################################################
+#
+    if [[ $linuxPMI_revision != $current_linuxPMI_revision ]]; then
+        echo "${yellow}'linuxPMI.sh' is not up to date${nc}"
+        echo "Downloading latest 'linuxPMI.sh'..."
+        #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/release/latest/linuxPMI.sh || { # Latest release branch
+        #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/linuxPMI.sh || { # Working dev branch
+        wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/linuxPMI.sh || { # Dev branch
+            echo "${red}Failed to download latest 'linuxPMI.sh'...${nc}" >&2
+            clean_exit "1" "Exiting" "true"
+        }
+        chmod +x linuxPMI.sh
+        echo "${cyan}Re-execute 'linuxPMI.sh'${nc}"
+        clean_exit "0" "Exiting" "true"
+        # TODO: Figure out a way to get exec to work 
+    fi
+
+#
+################################################################################
+#
 # Checks for root privilege and working directory
 #
 ################################################################################
@@ -74,7 +97,7 @@
     # Checks to see if this script was executed with root privilege
     if ((EUID != 0)); then 
         echo "${red}Please run this script as root or with root privilege${nc}" >&2
-        clean_exit "1" "Exiting"
+        clean_exit "1" "Exiting" "true"
     fi
 
     # Changes the working directory to that of where the executed script is
@@ -83,7 +106,7 @@
         echo "${red}Failed to change working directories" >&2
         echo "${cyan}Change your working directory to the same directory of" \
             "the executed script${nc}"
-        clean_exit "1" "Exiting"
+        clean_exit "1" "Exiting" "true"
     }
 
 #
@@ -150,26 +173,14 @@
             #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/release/latest/sub-master-installer.sh || { # Latest release branch
             #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/sub-master-installer.sh || { # Working dev branch
             wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/sub-master-installer.sh || { # Dev branch
-                echo "${red}Failed to download 'sub-master-installer.sh'..." >&2
-                if ! hash wget &>/dev/null; then
-                    echo "${yellow}wget is not installed${nc}"
-                    echo "Installing wget..."
-                    $1 install -y wget || {
-                        echo "${red}Failed to install wget${nc}"
-                        clean_exit "1" "Exiting"
-                    }
-                    echo "Attempting to download 'sub-master-installer.sh'..."
-                else
-                    echo "${red}Failed to download 'sub-master-installer.sh'${nc}" >&2
-                    clean_exit "1" "Exiting"
-                fi
+                failed_download "sub-master-installer.sh"
             }
             break
         done
 
         chmod +x sub-master-installer.sh && ./sub-master-installer.sh || {
             echo "${red}Failed to execute 'debian-ubuntu-installer.sh'${nc}" >&2
-            clean_exit "1" "Exiting"
+            clean_exit "1" "Exiting" "true"
         }
     }
 
@@ -279,5 +290,5 @@
     if [[ $supported = "false" ]]; then
         echo "${red}Your operating system/Linux Distribution is not supported" \
             "by the installation, setup, and/or use of Botler${nc}" >&2
-        clean_exit "1" "Exiting"
+        clean_exit "1" "Exiting" "true"
     fi
