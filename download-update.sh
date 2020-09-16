@@ -105,10 +105,13 @@
     # updates Botler
     ############################################################################
     if [[ $botler_version = "latest" ]]; then
-        botler_version=$(curl -s https://api.github.com/repos/Botler-Dev/Botler/releases/latest \
+        #botler_version=$(curl -s https://api.github.com/repos/Botler-Dev/Botler/releases/latest \
+        #   | grep -oP '"tag_name": "\K(.*)(?=")')
+        botler_version=$(curl -s https://api.github.com/repos/CodeBullet-Community/BulletBot/releases/latest \
            | grep -oP '"tag_name": "\K(.*)(?=")')
     fi
-    latest_release="https://github.com/Botler-Dev/Botler/tarball/${botler_version}"
+    #latest_release="https://github.com/Botler-Dev/Botler/tarball/${botler_version}"
+    latest_release="https://github.com/CodeBullet-Community/BulletBot/tarball/${botler_version}"
 
     # Makes sure that any changes to 'Botler/out/botconfig.json' by the user, are
     # made to 'Botler/src/botconfig.json' so when the code is compiled, the
