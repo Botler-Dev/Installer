@@ -55,6 +55,8 @@
         if [[ $1 = "true" ]]; then
             echo "Killing parent processes..."
             kill -9 "$sub_master_installer_pid" "$master_installer_pid"
+            echo "Exiting..."
+            exit 1
         fi
     }
 
@@ -161,8 +163,6 @@
         echo "${cyan}Either resolve the issue (recommended) or download" \
             "the latest release from github${nc}"
         clean_up "true"
-        echo -e "\nExiting..."
-        exit 1
     }
     
     echo "Untarring '$tag'..."    
@@ -170,8 +170,6 @@
     tar -zxf "$tag" && mv CodeBullet-Community-BulletBot-* Botler || {
         echo "${red}Failed to unzip '$tag'" >&2
         clean_up "true"
-        echo -e "\nExiting..."
-        exit 1
     }
     echo "Removing '$tag'..."
     rm "$tag" 2>/dev/null || echo "${red}Failed to remove" \
@@ -193,8 +191,6 @@
         tsc || {
             echo "${red}Failed to compile code${nc}" >&2
             clean_up "true"
-            echo -e "\nExiting..."
-            exit 1
         }
         echo -e "\n${cyan}If there are any errors, resolve whatever issue" \
             "is causing them, then attempt to compile the code again\n${nc}"
