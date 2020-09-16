@@ -41,14 +41,16 @@
             if [[ -f $file ]]; then rm "$file"; fi
         done
 
-        echo "Restoring from 'Botler.bak'"
-        mv -f Botler.bak Botler || {
-            echo "${red}Failed to restore from 'Botler.old'" >&2
-            echo "${cyan} Manually rename 'Botler.old' to 'Botler'${nc}"
-        }
+        if [[ -d Botler.bak ]]; then
+            echo "Restoring from 'Botler.bak'"
+            mv -f Botler.bak Botler || {
+                echo "${red}Failed to restore from 'Botler.old'" >&2
+                echo "${cyan} Manually rename 'Botler.old' to 'Botler'${nc}"
+            }
 
-        echo "Changing ownership of the file(s) in '/home/botler'..."
-        chown botler:botler -R "$home"
+            echo "Changing ownership of the file(s) in '/home/botler'..."
+            chown botler:botler -R "$home"
+        fi
     }
 
 #
