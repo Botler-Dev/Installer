@@ -7,10 +7,15 @@
 # the installer, this script has as little code as deemed necessary. In
 # addition, linuxPMI is the only script that will remain on the system.
 #
+# Note: The only thing the end user should ever change abou this file, is
+# 'botler_version' and 'installer_branch'. Though, please read the
+# documentation before messing with anything in this script.
+#
 ################################################################################
 #
-    # Keeps track of changes to linuxPMI.sh in combination with the master installer
-    export linuxPMI_revision="3"
+    export linuxPMI_revision="4" # Keeps track of changes to linuxPMI.sh
+    export botler_version="latest" # Determins which version of Botler is used
+    export installer_branch="dev" # Determins which installer branch is used
 
     # Checks to see if this script was executed with root privilege
     if ((EUID != 0)); then 
@@ -20,9 +25,7 @@
     fi
 
     echo "Downloading 'linux-master-installer.sh'..."
-    #wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/release/latest/linux-master-installer.sh || { # Latest release branch
-    #wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/master/linux-master-installer.sh || { # Working dev branch
-    wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/dev/linux-master-installer.sh || { # Dev branch
+    wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/linux-master-installer.sh || {
         echo "Failed to download 'linux-master-installer.sh'..." >&2
         echo -e "\nExiting..."
         exit 1

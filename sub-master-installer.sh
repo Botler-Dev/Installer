@@ -169,8 +169,7 @@
 
 
         ########################################################################
-        # User options for installing perquisites, downloading Botler, and
-        # starting Botler in different run modes
+        # User options for installing perquisites and downloading Botler
         ########################################################################
         # Checks to see if it is necessary to download Botler
         if [[ ! -d Botler/src && ! -d Botler/out ]]; then
@@ -185,8 +184,7 @@
                     export home
                     export botler_service
                     export botler_service_content
-                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
                     exec "$master_installer"
                     ;;
@@ -266,42 +264,36 @@
                     export home
                     export botler_service
                     export botler_service_content
-                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
                     exec "$master_installer"
                     ;;
                 2)
-                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/postgres-installer.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/postgres-installer.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/postgres-installer.sh
                     bash postgres-installer.sh
                     clear -x
                     ;;
                 3)
                     export option
-                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/nodejs-installer.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/nodejs-installer.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/nodejs-installer.sh
                     bash nodejs-installer.sh
                     clear -x
                     ;;
                 4)
                     export option
-                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/nodejs-installer.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/nodejs-installer.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/nodejs-installer.sh
                     bash nodejs-installer.sh
                     clear -x
                     ;;
                 5)
                     export botler_service_status
-                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/botconfig-setup.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/botconfig-setup.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/botconfig-setup.sh
                     bash botconfig-setup.sh
                     clear -x
                     ;;
                 6)
                     export botler_service_status
-                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/ormconfig-setup.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/ormconfig-setup.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/ormconfig-setup.sh
                     bash ormconfig-setup.sh
                     clear -x
                     ;;
@@ -399,7 +391,11 @@
                     continue
                     ;;
             esac
-        # Botler run mode options
+
+
+        ########################################################################
+        # User options for starting Botler
+        ########################################################################
         else
             echo "${cyan}Note: Running Botler in the same mode it's currently" \
                 "running in, will restart the bot${nc}"
@@ -442,8 +438,7 @@
                     export home
                     export botler_service
                     export botler_service_content
-                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
                     exec "$master_installer"
                     ;;
@@ -467,8 +462,7 @@
                     clear -x
                     ;;
                 5)
-                    #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/postgres-open-close.sh
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/postgres-open-close.sh
+                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/postgres-open-close.sh
                     postgres-open-close.sh
                     clear -x
                     ;;
