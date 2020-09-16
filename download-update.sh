@@ -70,7 +70,7 @@
     trap "echo -e \"\n\nScript forcefully stopped\"
         clean_up
         echo \"Killing parent processes...\"
-        kill -9 \"$_SUB_MASTER_INSTALLER_PID\" \"$_MASTER_INSTALLER_PID\"
+        kill -9 \"$sub_master_installer_pid\" \"$master_installer_pid\"
         echo \"Exiting...\"
         exit 1" \
         SIGINT SIGTSTP SIGTERM

@@ -13,7 +13,7 @@
 #
 ################################################################################
 #
-    export _SUB_MASTER_INSTALLER_PID=$$
+    export sub_master_installer_pid=$$
 
 #
 ################################################################################
@@ -188,7 +188,7 @@
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$_MASTER_INSTALLER"
+                    exec "$master_installer"
                     ;;
                 2)
                     clean_exit "0" "Exiting"
@@ -269,7 +269,7 @@
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$_MASTER_INSTALLER"
+                    exec "$master_installer"
                     ;;
                 2)
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/postgres-installer.sh
@@ -445,7 +445,7 @@
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$_MASTER_INSTALLER"
+                    exec "$master_installer"
                     ;;
                 2)
                     export home

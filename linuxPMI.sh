@@ -1,21 +1,30 @@
 #!/bin/bash
 
-# TODO: Make comment on purpouse of this variable
-export linuxPMI_revision="3"
-export _LINUXPMI="/home/bolter/linuxPMI.sh"
+################################################################################
+#
+# linuxPMI acts as the intermediary between the server Botler is being hosted
+# on and the linux master installer. To prevent any conflict with updates to
+# the installer, this script has as little code as deemed necessary. In
+# addition, linuxPMI is the only script that will remain on the system.
+#
+################################################################################
+#
+    # Keeps track of changes to linuxPMI.sh in combination with the master installer
+    export linuxPMI_revision="3"
 
-# Checks to see if this script was executed with root privilege
-if ((EUID != 0)); then 
-    echo "Please run this script as root or with root privilege" >&2
-    echo -e "\nExiting..."
-    exit 1 
-fi
+    # Checks to see if this script was executed with root privilege
+    if ((EUID != 0)); then 
+        echo "Please run this script as root or with root privilege" >&2
+        echo -e "\nExiting..."
+        exit 1 
+    fi
 
-echo "Downloading 'linux-master-installer.sh'..."
-#wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/master/linux-master-installer.sh || {
-wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/dev/linux-master-installer.sh || {
-    echo "Failed to download 'linux-master-installer.sh'..." >&2
-    echo -e "\nExiting..."
-    exit 1
-}
-chmod +x linux-master-installer.sh && ./linux-master-installer.sh
+    echo "Downloading 'linux-master-installer.sh'..."
+    #wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/release/latest/linux-master-installer.sh || { # Latest release branch
+    #wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/master/linux-master-installer.sh || { # Working dev branch
+    wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/dev/linux-master-installer.sh || { # Dev branch
+        echo "Failed to download 'linux-master-installer.sh'..." >&2
+        echo -e "\nExiting..."
+        exit 1
+    }
+    chmod +x linux-master-installer.sh && ./linux-master-installer.sh
