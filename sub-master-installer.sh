@@ -5,7 +5,7 @@
 # The sub-master installer
 #
 # Note: All variables not defined in this script, are exported from
-# 'linux-master-installer.sh'.
+# 'linuxPMI.sh' and 'linux-master-installer.sh'.
 #
 ################################################################################
 #
@@ -270,31 +270,31 @@
                     ;;
                 2)
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/postgres-installer.sh
-                    bash postgres-installer.sh
+                    chmod +x postgres-installer.sh && ./postgres-installer.sh
                     clear -x
                     ;;
                 3)
                     export option
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/nodejs-installer.sh
-                    bash nodejs-installer.sh
+                    chmod +x nodejs-installer.sh && ./nodejs-installer.sh
                     clear -x
                     ;;
                 4)
                     export option
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/nodejs-installer.sh
-                    bash nodejs-installer.sh
+                    chmod +x nodejs-installer.sh && ./nodejs-installer.sh
                     clear -x
                     ;;
                 5)
                     export botler_service_status
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/botconfig-setup.sh
-                    bash botconfig-setup.sh
+                    chmod +x botconfig-setup.sh && ./botconfig-setup.sh
                     clear -x
                     ;;
                 6)
                     export botler_service_status
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/ormconfig-setup.sh
-                    bash ormconfig-setup.sh
+                    chmod +x ormconfig-setup.sh && ./ormconfig-setup.sh
                     clear -x
                     ;;
                 7)

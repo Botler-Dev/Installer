@@ -7,6 +7,9 @@
 # system is deemed as supported, the appropriate sub-master installer will be
 # chosen, downloaded, then executed.
 #
+# Note: All variables not defined in this script, are exported from
+# 'linuxPMI.sh'.
+#
 ################################################################################
 #
 # Exported and/or globally used [ variables ]
