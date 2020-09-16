@@ -165,15 +165,15 @@
         clean_up "true"
     }
     
-    echo "Untarring '$tag'..."    
-    #tar -zxf "$tag" && mv Botler-Dev-Botler-* Botler || {
-    tar -zxf "$tag" && mv CodeBullet-Community-BulletBot-* Botler || {
-        echo "${red}Failed to unzip '$tag'" >&2
+    echo "Untarring '$botler_version'..."    
+    #tar -zxf "$botler_version" && mv Botler-Dev-Botler-* Botler || {
+    tar -zxf "$botler_version" && mv CodeBullet-Community-BulletBot-* Botler || {
+        echo "${red}Failed to untar '$botler_version'" >&2
         clean_up "true"
     }
-    echo "Removing '$tag'..."
-    rm "$tag" 2>/dev/null || echo "${red}Failed to remove" \
-        "'$tag'${nc}" >&2
+    echo "Removing '$botler_version'..."
+    rm "$botler_version" 2>/dev/null || echo "${red}Failed to remove" \
+        "'$botler_version'${nc}" >&2
     
     if [[ -f tmp/botconfig.json ]]; then
         cp -f tmp/botconfig.json Botler/out/ && rm -rf tmp/ || {
