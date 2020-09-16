@@ -114,7 +114,7 @@
     if [[ $botler_version = "latest" ]]; then
         #botler_version=$(curl -s https://api.github.com/repos/Botler-Dev/Botler/releases/latest \
         #   | grep -oP '"tag_name": "\K(.*)(?=")')
-        botler_version=$(curl -s https://api.github.com/repos/CodeBullet-Community/BulletBot/releases/latest \
+        botler_version=$(curl -s https://api.github.com/repos/CodeBullet-Community/BulletBot/releases/latests \
            | grep -oP '"tag_name": "\K(.*)(?=")')
     fi
     #latest_release="https://github.com/Botler-Dev/Botler/tarball/${botler_version}"
