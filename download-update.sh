@@ -5,7 +5,7 @@
 # Downloads and updates Botler  
 #
 # Note: All variables not defined in this script, are exported from
-# 'linux-master-installer.sh' and 'sub-master-installer.sh'.
+# 'linuxPMI.sh', 'linux-master-installer.sh', and 'sub-master-installer.sh'.
 #
 ################################################################################
 #
@@ -185,7 +185,7 @@
 
     # Checks if it's possible to compile code
     if (! hash tsc || ! hash node) &>/dev/null || [[ ! -f Botler/src/botconfig.json ]]; then
-        echo "Skipping typescript compilation..."
+        echo "Skipping typescript compilation"
     else
         echo "Compiling code..."
         tsc || {
@@ -194,6 +194,15 @@
         }
         echo -e "\n${cyan}If there are any errors, resolve whatever issue" \
             "is causing them, then attempt to compile the code again\n${nc}"
+    fi
+
+    # Checks if it's possible to (re)install node_modules
+    if hash npm &>/dev/null; then
+        export option
+        wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/nodejs-installer.sh
+        chmod +x nodejs-installer.sh && ./nodejs-installer.sh
+    else
+        echo "Skipping node_modules installation"
     fi
 
     if [[ -d Botler.old && -d Botler.bak || ! -d Botler.old && -d Botler.bak ]]; then
