@@ -18,20 +18,28 @@
         if ! hash "$1" &>/dev/null; then
             echo "${yellow}${1} is not installed${nc}"
             echo "Installing ${1}..."
-            apt -y install "$1" || apt -y install $2 || {
+            apt -y install "$1" || {
                 echo "${red}Failed to install $1" >&2
                 echo "${cyan}${1} must be installed to continue${nc}"
-                clean_exit "1" 
+                echo -e "\nPress [Enter] to return to the installer menu"
+                clean_exit "1" "Returning to the installer menu"
             }
         fi
     }
 
     # Cleans up any loose ends/left over files
     clean_up() {
+        local installer_files=("sub-master-installer.sh" "nodejs-installer.sh"
+            "postgres-installer.sh" "botconfig-setup.sh" "ormconfig-setup.sh"
+            "postgres-open-close.sh" "download-update.sh" "linux-master-installer.sh")
+
         echo "Cleaning up files and directories..."
         if [[ -d tmp ]]; then rm -rf tmp; fi
         if [[ -f $tag ]]; then rm "$tag"; fi
         if [[ -d Botler ]]; then rm -rf Botler; fi
+        for file in "${installer_files[@]}"; do
+            if [[ -f $file ]]; then rm "$file"; fi
+        done
 
         echo "Restoring from 'Botler.bak'"
         mv -f Botler.bak Botler || {
@@ -58,9 +66,14 @@
     ############################################################################
     # Error trapping
     ############################################################################
-    # TODO: Test more and maybe modify
-    trap "echo -e \"\n\nScript forcefully stopped\" && clean_up; echo \
-        \"Exiting...\" && exit" SIGINT SIGTERM SIGTSTP
+    # TODO: Figure out how to silently kill a process
+    trap "echo -e \"\n\nScript forcefully stopped\"
+        clean_up
+        echo \"Killing parent processes...\"
+        kill -9 \"$_SUB_MASTER_INSTALLER_PID\" \"$_MASTER_INSTALLER_PID\"
+        echo \"Exiting...\"
+        exit 1" \
+        SIGINT SIGTSTP SIGTERM
 
 
     ############################################################################
@@ -85,7 +98,6 @@
     ############################################################################
     required_software "curl"
     required_software "wget"
-    required_software "gpg2" "gnupg2"
 
 
     ############################################################################
@@ -112,14 +124,16 @@
             mkdir tmp || {
                 echo "Failed to create 'tmp/'" >&2
                 echo "${cyan}Please create it manually before continuing${nc}"
-                clean_exit "1"
+                echo -e "\nPress [Enter] to return to the installer menu"
+                clean_exit "1" "Returning to the installer menu"
             }
         fi
 
         cp Botler/src/botconfig.json tmp/ || {
             echo "${red}Failed to copy 'botconfig.json' to 'tmp/'" >&2
             echo "${cyan}Please copy it manually before continuing${nc}"
-            clean_exit "1"
+            echo -e "\nPress [Enter] to return to the installer menu"
+            clean_exit "1" "Returning to the installer menu"
         }
     fi
 
@@ -127,7 +141,8 @@
         echo "Backing up Botler as Botler.bak..."
         mv -f Botler Botler.bak || {
             echo "${red}Failed to back up Botler${nc}" >&2
-            clean_exit "1"
+            echo -e "\nPress [Enter] to return to the installer menu"
+            clean_exit "1" "Returning to the installer menu"
         }
     fi
 
@@ -176,8 +191,11 @@
             "is causing them, then attempt to compile the code again\n${nc}"
     fi
 
-    if [[ -d Botler.old ]]; then rm -rf Botler.old; fi
-    mv -f Botler.bak Botler.old
+    if [[ -d Botler.old && -d Botler.bak || ! -d Botler.old && -d Botler.bak ]]; then
+    # TODO: Add error handling???
+        rm -rf Botler.old
+        mv -f Botler.bak Botler.old
+    fi
 
     if [[ -f $botler_service ]]; then
         echo "Updating 'botler.service'..."

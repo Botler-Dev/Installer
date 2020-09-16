@@ -9,6 +9,15 @@
 #
 ################################################################################
 #
+# Exported only [ variables ]
+#
+################################################################################
+#
+    export _SUB_MASTER_INSTALLER_PID=$$
+
+#
+################################################################################
+#
 # Global [ variables ]
 #
 ################################################################################
@@ -19,7 +28,7 @@
     # Contains all of the files/directories that are associated with Botler
     # (only files/directories located in the Botler root directory)
     # TODO: Current files in root dir may change
-    files=("linuxPMI.sh" "linux-master-installer.sh" "sub-master-installer.sh" \
+    files=("linuxPMI.sh" "linux-master-installer.sh" "sub-master-installer.sh"
         "Botler" "Botler.old")
     botler_service_content="[Unit] \
         \nDescription=Starts Botler after a crash or system reboot \
@@ -54,7 +63,7 @@
         cd "$home" || {
             echo "${red}Failed to change working directory to '$home'" >&2
             echo "${cyan}Change your working directory to '$home'${nc}"
-            clean_exit "1" 
+            clean_exit "1" "Exiting" 
         }
     }
 
@@ -114,7 +123,7 @@
                     echo "${red}Failed to create 'botler'" >&2
                     echo "${cyan}System user 'botler' must exist in order to" \
                         "continue${nc}"
-                    clean_exit "1"
+                    clean_exit "1" "Exiting"
                 }
                 echo "Changing permissions of '$home'..."
                 # Permissions for the home directory need to be changed, else an
@@ -125,7 +134,7 @@
                     echo "${red}Failed to create 'botler'" >&2
                     echo "${cyan}System user 'botler' must exist in order to" \
                         "continue${nc}"
-                    clean_exit "1" 
+                    clean_exit "1" "Exiting"
                 }
             fi
 
@@ -152,7 +161,7 @@
             echo -e "$botler_service_content" > "$botler_service" || {
                 echo "${red}Failed to create 'botler.service'" >&2
                 echo "${cyan}This service must exist for Botler to work${nc}"
-                clean_exit "1" 
+                clean_exit "1" "Exiting"
             }
             # Reloads systemd daemons to account for the added service
             systemctl daemon-reload
@@ -179,10 +188,10 @@
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$master_installer"
+                    exec "$_MASTER_INSTALLER"
                     ;;
                 2)
-                    clean_exit "0"
+                    clean_exit "0" "Exiting"
                     ;;
                 *)
                     clear -x
@@ -218,7 +227,7 @@
 
             if [[ ! -d Botler/node_modules ]] &>/dev/null; then
                 echo "4. Install required packages and dependencies" \
-                    "${red}(Already installed)${nc}"
+                    "${red}(Not installed)${nc}"
             else
                 echo "4. Install required packages and dependencies" \
                     "${green}(Already installed)${nc}"
@@ -260,7 +269,7 @@
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$master_installer"
+                    exec "$_MASTER_INSTALLER"
                     ;;
                 2)
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/postgres-installer.sh
@@ -381,7 +390,7 @@
                     clear -x
                     ;;
                 9)
-                    clean_exit "0"
+                    clean_exit "0" "Exiting"
                     ;;
                 *)
                     clear -x
@@ -436,7 +445,7 @@
                     #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/download-update.sh
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$master_installer"
+                    exec "$_MASTER_INSTALLER"
                     ;;
                 2)
                     export home
@@ -464,7 +473,7 @@
                     clear -x
                     ;;
                 6)
-                    clean_exit "0"
+                    clean_exit "0" "Exiting"
                     ;;
                 *)
                     clear -x
