@@ -67,7 +67,6 @@
 #
 ################################################################################
 #
-    clear -x
     printf "We will now download/update Botler. "
     read -p "Press [Enter] to begin."
     

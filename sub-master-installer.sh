@@ -181,6 +181,7 @@
             read option
             case "$option" in
                 1)
+                    clear -x
                     export home
                     export botler_service
                     export botler_service_content
@@ -261,6 +262,7 @@
             read option
             case "$option" in
                 1)
+                    clear -x
                     export home
                     export botler_service
                     export botler_service_content
@@ -269,29 +271,34 @@
                     exec "$master_installer"
                     ;;
                 2)
+                    clear -x
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/postgres-installer.sh
                     chmod +x postgres-installer.sh && ./postgres-installer.sh
                     clear -x
                     ;;
                 3)
+                    clear -x
                     export option
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/nodejs-installer.sh
                     chmod +x nodejs-installer.sh && ./nodejs-installer.sh
                     clear -x
                     ;;
                 4)
+                    clear -x
                     export option
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/nodejs-installer.sh
                     chmod +x nodejs-installer.sh && ./nodejs-installer.sh
                     clear -x
                     ;;
                 5)
+                    clear -x
                     export botler_service_status
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/botconfig-setup.sh
                     chmod +x botconfig-setup.sh && ./botconfig-setup.sh
                     clear -x
                     ;;
                 6)
+                    clear -x
                     export botler_service_status
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/ormconfig-setup.sh
                     chmod +x ormconfig-setup.sh && ./ormconfig-setup.sh
@@ -435,6 +442,7 @@
             read option
             case "$option" in
                 1)
+                    clear -x
                     export home
                     export botler_service
                     export botler_service_content
@@ -443,6 +451,7 @@
                     exec "$master_installer"
                     ;;
                 2)
+                    clear -x
                     export home
                     export botler_service_status
                     export botler_service_startup
@@ -450,6 +459,7 @@
                     clear -x
                     ;;
                 3)
+                    clear -x
                     export home
                     export botler_service_status
                     export botler_service_startup
@@ -457,11 +467,13 @@
                     clear -x
                     ;;
                 4)
+                    clear -x
                     export botler_service_status
                     # TODO: Put code here
                     clear -x
                     ;;
                 5)
+                    clear -x
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/postgres-open-close.sh
                     postgres-open-close.sh
                     clear -x
