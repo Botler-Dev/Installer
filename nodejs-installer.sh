@@ -113,5 +113,4 @@
         echo -e "\n${green}Finished installing required packages and" \
             "dependencies${nc}"
         read -p "Press [Enter] to return to the installer menu"
-        fi
     fi
