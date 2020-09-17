@@ -185,20 +185,23 @@
     # Checks if it's possible to (re)install node_modules
     if hash npm &>/dev/null; then
          while true; do
-            echo "Installing required packages and dependencies..."
+            echo "Installing node_modules..."
             npm install --prefix Botler/ --only=prod || {
-                echo "${red}Failed to install required packages and" \
-                    "dependencies${nc}" >&2
+                echo "${red}Failed to install node_modules${nc}" >&2
                 clean_up "true"
             }
+
+            echo "Installing typescript globally..."
             npm install -g typescript || {
                 echo "${red}Failed to install typescript globally" >&2
                 echo "${cyan}Typescript is required to compile the code to" \
                     "JS${nc}"
                 clean_up "true"
             }
+
+            echo "Funding node_modules packages..."
             npm fund Botler/ || {
-                echo "${red}Failed to fund npm packages${nc}" >&2
+                echo "${red}Failed to fund npm node_modules packages${nc}" >&2
             }
             break
         done

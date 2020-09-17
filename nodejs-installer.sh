@@ -43,22 +43,25 @@
     install_node_module_pkgs() {
         while true; do
             if hash npm &>/dev/null; then
-                echo "Installing required packages and dependencies..."
+                echo "Installing node_modules..."
                 npm install --prefix Botler/ --only=prod || {
-                    echo "${red}Failed to install required packages and" \
-                        "dependencies${nc}" >&2
+                    echo "${red}Failed to install node_modules${nc}" >&2
                     read -p "Press [Enter] to return to the installer menu"
                     exit 1
                 }
+
+                echo "Installing typescript globally..."
                 npm install -g typescript || {
                     echo "${red}Failed to install typescript globally" >&2
-                    echo "${cyan}Typescript is required to compile the code to" \
-                        "JS${nc}"
+                    echo "${cyan}Typescript is required to compile the code" \
+                        "to JS${nc}"
                     read -p "Press [Enter] to return to the installer menu"
                     exit 1
                 }
+                
+                echo "Funding node_module packages"
                 npm fund Botler/ || {
-                    echo "${red}Failed to fund npm packages${nc}" >&2
+                    echo "${red}Failed to fund npm node_module packages${nc}" >&2
                 }
                 break
             else
@@ -91,7 +94,6 @@
 #
 ################################################################################
 #
-
     if ((option == 3)); then
         printf "We will now download and install nodejs and any required packages. "
         read -p "Press [Enter] to begin."
