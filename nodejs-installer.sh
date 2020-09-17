@@ -44,8 +44,6 @@
         while true; do
             if hash npm &>/dev/null; then
                 echo "Installing required packages and dependencies..."
-                # Installs production packages only
-                # TODO: 'npm install --only=prod || {' OR 'npm ci || {' ???
                 npm install --prefix Botler/ --only=prod || {
                     echo "${red}Failed to install required packages and" \
                         "dependencies${nc}" >&2
@@ -59,7 +57,7 @@
                     read -p "Press [Enter] to return to the installer menu"
                     exit 1
                 }
-                npm fund || {
+                npm fund Botler/ || {
                     echo "${red}Failed to fund npm packages${nc}" >&2
                 }
                 break
@@ -105,17 +103,13 @@
             "required packages${nc}"
         read -p "Press [Enter] to return to the installer menu"
     else
-        if ((option == 4)); then
-            printf "We will now install the required packages and dependencies. " 
-            read -p "Press [Enter] to begin."
-            install_node_module_pkgs
-            echo "Changing ownership of the file(s) added to '/home/botler'..."
-            chown botler:botler -R /home/botler
-            echo -e "\n${green}Finished installing required packages and" \
-                "dependencies${nc}"
-            read -p "Press [Enter] to return to the installer menu"
-        # Used when downloading/updating Botler
-        elif [[ $downloader == "true" ]]; then
-            install_node_module_pkgs
+        printf "We will now install the required packages and dependencies. " 
+        read -p "Press [Enter] to begin."
+        install_node_module_pkgs
+        echo "Changing ownership of the file(s) added to '/home/botler'..."
+        chown botler:botler -R /home/botler
+        echo -e "\n${green}Finished installing required packages and" \
+            "dependencies${nc}"
+        read -p "Press [Enter] to return to the installer menu"
         fi
     fi
