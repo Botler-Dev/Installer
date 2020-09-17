@@ -46,13 +46,13 @@
                 echo "Installing required packages and dependencies..."
                 # Installs production packages only
                 # TODO: 'npm install --only=prod || {' OR 'npm ci || {' ???
-                npm install --only=prod || {
+                npm install --prefix Botler/ --only=prod || {
                     echo "${red}Failed to install required packages and" \
                         "dependencies${nc}" >&2
                     read -p "Press [Enter] to return to the installer menu"
                     exit 1
                 }
-                npm install -g typescript || {
+                npm install --prefix Botler/ -g typescript || {
                     echo "${red}Failed to install typescript globally" >&2
                     echo "${cyan}Typescript is required to compile the code to" \
                         "JS${nc}"
