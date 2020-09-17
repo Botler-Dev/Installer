@@ -103,6 +103,7 @@
         chown botler:botler -R /home/botler
         echo -e "\n${green}Finished downloading and installing nodejs and any" \
             "required packages${nc}"
+        read -p "Press [Enter] to return to the installer menu"
     else
         if ((option == 4)); then
             printf "We will now install the required packages and dependencies. " 
@@ -112,11 +113,9 @@
             chown botler:botler -R /home/botler
             echo -e "\n${green}Finished installing required packages and" \
                 "dependencies${nc}"
+            read -p "Press [Enter] to return to the installer menu"
         # Used when downloading/updating Botler
         elif [[ $downloader == "true" ]]; then
             install_node_module_pkgs
         fi
     fi
-
-    read -p "Press [Enter] to return to the installer menu"
-
