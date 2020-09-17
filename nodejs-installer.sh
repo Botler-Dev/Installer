@@ -59,6 +59,9 @@
                     read -p "Press [Enter] to return to the installer menu"
                     exit 1
                 }
+                npm fund || {
+                    echo "${red}Failed to fund npm packages${nc}" >&2
+                }
                 break
             else
                 echo "${yellow}npm is not installed${nc}"
