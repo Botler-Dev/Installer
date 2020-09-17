@@ -198,7 +198,7 @@
 
     # Checks if it's possible to (re)install node_modules
     if hash npm &>/dev/null; then
-        export option
+        export option=1
         wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/nodejs-installer.sh
         chmod +x nodejs-installer.sh && ./nodejs-installer.sh
     else

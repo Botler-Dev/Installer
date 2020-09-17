@@ -93,7 +93,6 @@
 #
 ################################################################################
 #
-    clear
 
     if ((option == 3)); then
         printf "We will now download and install nodejs and any required packages. "
@@ -105,8 +104,10 @@
         echo -e "\n${green}Finished downloading and installing nodejs and any" \
             "required packages${nc}"
     else
-        printf "We will now install the required packages and dependencies. " 
-        read -p "Press [Enter] to begin."
+        if ((option == 4)); then
+            printf "We will now install the required packages and dependencies. " 
+            read -p "Press [Enter] to begin."
+        fi
         install_node_module_pkgs
         echo "Changing ownership of the file(s) added to '/home/botler'..."
         chown botler:botler -R /home/botler
