@@ -52,7 +52,7 @@
                     read -p "Press [Enter] to return to the installer menu"
                     exit 1
                 }
-                npm install --prefix Botler/ -g typescript || {
+                npm install -g typescript || {
                     echo "${red}Failed to install typescript globally" >&2
                     echo "${cyan}Typescript is required to compile the code to" \
                         "JS${nc}"
