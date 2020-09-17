@@ -2,26 +2,20 @@
 
 ################################################################################
 #
-# Installs Postgres 12. It is installed using the instructions described here:
-# https://www.postgresql.org/download/linux/
+# Installs Postgres 12 on Debian and Ubuntu. It is installed using the
+# instructions described here: https://www.postgresql.org/download/linux/
 #
-# Note: All variables are exported from 'linux-master-installer.sh' and
-# 'debian-ubuntu-installer.sh'.
-#
-################################################################################
-#
-    clear
-    read -p "We will now download and install Postgres. Press [Enter] to begin."
-
+# Note: All variables not defined in this script, are exported from
+# 'linuxPMI.sh', 'linux-master-installer.sh', and 'sub-master-installer.sh'
 #
 ################################################################################
 #
 # [ Main ]
 #
-# Installing Postgres
-#
 ################################################################################
 #
+    read -p "We will now download and install Postgres. Press [Enter] to begin."
+
     echo "Importing public key..."
     wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add - || {
         echo "${red}Failed to import public key" >&2

@@ -272,7 +272,11 @@
                     ;;
                 2)
                     clear -x
-                    wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/postgres-installer.sh
+                    if [[ $distro = "rhel" || $distro = "centos" ]]; then
+                        wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/CentOS-RHEL/postgres-installer.sh
+                    else
+                        wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/Debian-Ubuntu/postgres-installer.sh
+                    fi
                     chmod +x postgres-installer.sh && ./postgres-installer.sh
                     clear -x
                     ;;
