@@ -107,12 +107,15 @@
         if ((option == 4)); then
             printf "We will now install the required packages and dependencies. " 
             read -p "Press [Enter] to begin."
+            install_node_module_pkgs
+            echo "Changing ownership of the file(s) added to '/home/botler'..."
+            chown botler:botler -R /home/botler
+            echo -e "\n${green}Finished installing required packages and" \
+                "dependencies${nc}"
+        # Used when downloading/updating Botler
+        elif [[ $downloader == "true" ]]; then
+            install_node_module_pkgs
         fi
-        install_node_module_pkgs
-        echo "Changing ownership of the file(s) added to '/home/botler'..."
-        chown botler:botler -R /home/botler
-        echo -e "\n${green}Finished installing required packages and" \
-            "dependencies${nc}"
     fi
 
     read -p "Press [Enter] to return to the installer menu"
