@@ -184,9 +184,24 @@
 
     # Checks if it's possible to (re)install node_modules
     if hash npm &>/dev/null; then
-        export downloader="true"
-        wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/nodejs-installer.sh
-        chmod +x nodejs-installer.sh && ./nodejs-installer.sh
+         while true; do
+            echo "Installing required packages and dependencies..."
+            npm install --prefix Botler/ --only=prod || {
+                echo "${red}Failed to install required packages and" \
+                    "dependencies${nc}" >&2
+                clean_up "true"
+            }
+            npm install -g typescript || {
+                echo "${red}Failed to install typescript globally" >&2
+                echo "${cyan}Typescript is required to compile the code to" \
+                    "JS${nc}"
+                clean_up "true"
+            }
+            npm fund Botler/ || {
+                echo "${red}Failed to fund npm packages${nc}" >&2
+            }
+            break
+        done
     else
         echo "Skipping node_modules installation"
     fi
@@ -205,9 +220,8 @@
     fi
 
     if [[ -d Botler.old && -d Botler.bak || ! -d Botler.old && -d Botler.bak ]]; then
-    # TODO: Add error handling???
-        rm -rf Botler.old
-        mv -f Botler.bak Botler.old
+        # TODO: Add error handling???
+        rm -rf Botler.old && mv -f Botler.bak Botler.old
     fi
 
     if [[ -f $botler_service ]]; then
