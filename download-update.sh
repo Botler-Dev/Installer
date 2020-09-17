@@ -5,7 +5,7 @@
 # Downloads and updates Botler  
 #
 # Note: All variables not defined in this script, are exported from
-# 'linux-master-installer.sh' and 'sub-master-installer.sh'.
+# 'linuxPMI.sh', 'linux-master-installer.sh', and 'sub-master-installer.sh'.
 #
 ################################################################################
 #
@@ -35,20 +35,29 @@
 
         echo "Cleaning up files and directories..."
         if [[ -d tmp ]]; then rm -rf tmp; fi
-        if [[ -f $tag ]]; then rm "$tag"; fi
+        if [[ -f $botler_version ]]; then rm "$botler_version"; fi
         if [[ -d Botler ]]; then rm -rf Botler; fi
         for file in "${installer_files[@]}"; do
             if [[ -f $file ]]; then rm "$file"; fi
         done
 
-        echo "Restoring from 'Botler.bak'"
-        mv -f Botler.bak Botler || {
-            echo "${red}Failed to restore from 'Botler.old'" >&2
-            echo "${cyan} Manually rename 'Botler.old' to 'Botler'${nc}"
-        }
+        if [[ -d Botler.bak ]]; then
+            echo "Restoring from 'Botler.bak'"
+            mv -f Botler.bak Botler || {
+                echo "${red}Failed to restore from 'Botler.old'" >&2
+                echo "${cyan} Manually rename 'Botler.old' to 'Botler'${nc}"
+            }
 
-        echo "Changing ownership of the file(s) in '/home/botler'..."
-        chown botler:botler -R "$home"
+            echo "Changing ownership of the file(s) in '/home/botler'..."
+            chown botler:botler -R "$home"
+        fi
+
+        if [[ $1 = "true" ]]; then
+            echo "Killing parent processes..."
+            kill -9 "$sub_master_installer_pid" "$master_installer_pid"
+            echo "Exiting..."
+            exit 1
+        fi
     }
 
 #
@@ -58,7 +67,6 @@
 #
 ################################################################################
 #
-    clear -x
     printf "We will now download/update Botler. "
     read -p "Press [Enter] to begin."
     
@@ -104,12 +112,14 @@
     # Creating backups of current code in '/home/botler' then downloads/
     # updates Botler
     ############################################################################
-    #tag=$(curl -s https://api.github.com/repos/Botler-Dev/Botler/releases/latest \
-    #        | grep -oP '"tag_name": "\K(.*)(?=")')
-    #local latest_release="https://github.com/Botler-Dev/Botler/tarball/${tag}"
-    tag=$(curl -s https://api.github.com/repos/CodeBullet-Community/BulletBot/releases/latest \
-            | grep -oP '"tag_name": "\K(.*)(?=")')
-    latest_release="https://github.com/CodeBullet-Community/BulletBot/tarball/${tag}"
+    if [[ $botler_version = "latest" ]]; then
+        #botler_version=$(curl -s https://api.github.com/repos/Botler-Dev/Botler/releases/latest \
+        #   | grep -oP '"tag_name": "\K(.*)(?=")')
+        botler_version=$(curl -s https://api.github.com/repos/CodeBullet-Community/BulletBot/releases/latest \
+           | grep -oP '"tag_name": "\K(.*)(?=")')
+    fi
+    #latest_release="https://github.com/Botler-Dev/Botler/tarball/${botler_version}"
+    latest_release="https://github.com/CodeBullet-Community/BulletBot/tarball/${botler_version}"
 
     # Makes sure that any changes to 'Botler/out/botconfig.json' by the user, are
     # made to 'Botler/src/botconfig.json' so when the code is compiled, the
@@ -151,22 +161,18 @@
         echo "${red}Failed to download the latest release" >&2
         echo "${cyan}Either resolve the issue (recommended) or download" \
             "the latest release from github${nc}"
-        clean_up
-        echo -e "\nExiting..."
-        exit 1
+        clean_up "true"
     }
     
-    echo "Untarring '$tag'..."    
-    #tar -zxf "$tag" && mv Botler-Dev-Botler-* Botler || {
-    tar -zxf "$tag" && mv CodeBullet-Community-BulletBot-* Botler || {
-        echo "${red}Failed to unzip '$tag'" >&2
-        clean_up
-        echo -e "\nExiting..."
-        exit 1
+    echo "Untarring '$botler_version'..."    
+    #tar -zxf "$botler_version" && mv Botler-Dev-Botler-* Botler || {
+    tar -zxf "$botler_version" && mv CodeBullet-Community-BulletBot-* Botler || {
+        echo "${red}Failed to untar '$botler_version'" >&2
+        clean_up "true"
     }
-    echo "Removing '$tag'..."
-    rm "$tag" 2>/dev/null || echo "${red}Failed to remove" \
-        "'$tag'${nc}" >&2
+    echo "Removing '$botler_version'..."
+    rm "$botler_version" 2>/dev/null || echo "${red}Failed to remove" \
+        "'$botler_version'${nc}" >&2
     
     if [[ -f tmp/botconfig.json ]]; then
         cp -f tmp/botconfig.json Botler/out/ && rm -rf tmp/ || {
@@ -176,25 +182,49 @@
         }
     fi
 
+    # Checks if it's possible to (re)install node_modules
+    if hash npm &>/dev/null; then
+         while true; do
+            echo "Installing node_modules..."
+            npm install --prefix Botler/ --only=prod || {
+                echo "${red}Failed to install node_modules${nc}" >&2
+                clean_up "true"
+            }
+
+            echo "Installing typescript globally..."
+            npm install -g typescript || {
+                echo "${red}Failed to install typescript globally" >&2
+                echo "${cyan}Typescript is required to compile the code to" \
+                    "JS${nc}"
+                clean_up "true"
+            }
+
+            echo "Funding node_modules packages..."
+            npm fund --prefix Botler/ || {
+                echo "${red}Failed to fund npm node_modules packages${nc}" >&2
+            }
+            break
+        done
+    else
+        echo "Skipping node_modules installation"
+    fi
+
     # Checks if it's possible to compile code
     if (! hash tsc || ! hash node) &>/dev/null || [[ ! -f Botler/src/botconfig.json ]]; then
-        echo "Skipping typescript compilation..."
+        echo "Skipping typescript compilation"
     else
         echo "Compiling code..."
         tsc || {
             echo "${red}Failed to compile code${nc}" >&2
-            clean_up
-            echo -e "\nExiting..."
-            exit 1
+            clean_up "true"
         }
         echo -e "\n${cyan}If there are any errors, resolve whatever issue" \
             "is causing them, then attempt to compile the code again\n${nc}"
     fi
 
     if [[ -d Botler.old && -d Botler.bak || ! -d Botler.old && -d Botler.bak ]]; then
-    # TODO: Add error handling???
-        rm -rf Botler.old
-        mv -f Botler.bak Botler.old
+        # TODO: Add error handling???
+        rm -rf Botler.old && mv -f Botler.bak Botler.old
     fi
 
     if [[ -f $botler_service ]]; then

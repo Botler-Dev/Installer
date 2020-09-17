@@ -7,6 +7,9 @@
 # system is deemed as supported, the appropriate sub-master installer will be
 # chosen, downloaded, then executed.
 #
+# Note: All variables not defined in this script, are exported from
+# 'linuxPMI.sh'.
+#
 ################################################################################
 #
 # Exported and/or globally used [ variables ]
@@ -19,7 +22,7 @@
     red=$'\033[1;31m'
     nc=$'\033[0m'
     clrln=$'\r\033[K'
-    current_linuxPMI_revision="3"
+    current_linuxPMI_revision="4"
 
 #
 ################################################################################
@@ -75,9 +78,7 @@
     if [[ $linuxPMI_revision != $current_linuxPMI_revision ]]; then
         echo "${yellow}'linuxPMI.sh' is not up to date${nc}"
         echo "Downloading latest 'linuxPMI.sh'..."
-        #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/release/latest/linuxPMI.sh || { # Latest release branch
-        #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/linuxPMI.sh || { # Working dev branch
-        wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/linuxPMI.sh || { # Dev branch
+        wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/linuxPMI.sh || {
             echo "${red}Failed to download latest 'linuxPMI.sh'...${nc}" >&2
             clean_exit "1" "Exiting" "true"
         }
@@ -170,9 +171,7 @@
         export pkg_mng=$1
         #echo "Downloading 'sub-master-installer.sh'..."
         while true; do
-            #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/release/latest/sub-master-installer.sh || { # Latest release branch
-            #wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/master/sub-master-installer.sh || { # Working dev branch
-            wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/dev/sub-master-installer.sh || { # Dev branch
+            wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/sub-master-installer.sh || {
                 failed_download "sub-master-installer.sh"
             }
             break
