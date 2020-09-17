@@ -60,7 +60,7 @@
                 }
                 
                 echo "Funding node_module packages"
-                npm fund Botler/ || {
+                npm fund --prefix Botler/ || {
                     echo "${red}Failed to fund npm node_module packages${nc}" >&2
                 }
                 break
