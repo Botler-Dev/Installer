@@ -24,10 +24,10 @@
         exit 1 
     fi
 
-    echo "Downloading 'linux-master-installer.sh'..."
-    wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/linux-master-installer.sh || {
-        echo "Failed to download 'linux-master-installer.sh'..." >&2
+    echo "Downloading 'installer-prep.sh'..."
+    wget -N https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/installer-prep.sh || {
+        echo "Failed to download 'installer-prep.sh'..." >&2
         echo -e "\nExiting..."
         exit 1
     }
-    chmod +x linux-master-installer.sh && ./linux-master-installer.sh
+    chmod +x installer-prep.sh && ./installer-prep.sh

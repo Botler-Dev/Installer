@@ -8,7 +8,7 @@
 # https://github.com/nodesource/distributions/blob/master/README.md
 #
 # Note: All variables not defined in this script, are exported from
-# 'linuxPMI.sh', 'linux-master-installer.sh', and 'sub-master-installer.sh'.
+# 'linuxPMI.sh', 'installer-prep.sh', and 'linux-master-installer.sh'.
 #
 ################################################################################
 #

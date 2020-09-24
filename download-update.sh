@@ -5,7 +5,7 @@
 # Downloads and updates Botler  
 #
 # Note: All variables not defined in this script, are exported from
-# 'linuxPMI.sh', 'linux-master-installer.sh', and 'sub-master-installer.sh'.
+# 'linuxPMI.sh', 'installer-prep.sh', and 'linux-master-installer.sh'.
 #
 ################################################################################
 #
@@ -29,9 +29,9 @@
 
     # Cleans up any loose ends/left over files
     clean_up() {
-        local installer_files=("sub-master-installer.sh" "nodejs-installer.sh"
-            "postgres-installer.sh" "botconfig-setup.sh" "ormconfig-setup.sh"
-            "postgres-open-close.sh" "download-update.sh" "linux-master-installer.sh")
+        local installer_files=("linux-master-installer.sh" "nodejs-installer.sh"
+            "postgres-installer.sh" "botconfig-setup.sh" "postgres-open-close.sh"
+            "download-update.sh" "installer-prep.sh")
 
         echo "Cleaning up files and directories..."
         if [[ -d tmp ]]; then rm -rf tmp; fi
