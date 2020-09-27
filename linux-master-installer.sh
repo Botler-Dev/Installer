@@ -2,18 +2,14 @@
 
 ################################################################################
 #
-# The master/main installer script for liinux distributions
+# The master/main installer script for Linux Distributions 
 #
 # Note: All variables not defined in this script, are exported from
 # 'linuxPMI.sh' and 'installer-prep.sh'.
 #
 ################################################################################
 #
-# Exported only [ variables ]
-#
-################################################################################
-#
-    export sub_master_installer_pid=$$
+    export linux_master_installer_pid=$$
 
 #
 ################################################################################
@@ -30,22 +26,22 @@
     # TODO: Current files in root dir may change
     files=("linuxPMI.sh" "installer-prep.sh" "linux-master-installer.sh"
         "Botler" "Botler.old")
-    botler_service_content="[Unit] \
-        \nDescription=Starts Botler after a crash or system reboot \
-        \nAfter=network.target postgresql-12.service  \
-        \n  \
-        \n[Service]  \
-        \nUser=botler  \
-        \nWorkingDirectory=$bottius_root_dir \
-        \nExecStart=/usr/bin/node out/main.js \
-        \n#ExecStart=/usr/bin/node $bottius_root_dir/out/main.js  \
-        \nRestart=always  \
-        \nRestartSec=3  \
-        \nStandardOutput=syslog  \
-        \nStandardError=syslog  \
-        \nSyslogIdentifier=botler  \
-        \n  \
-        \n[Install]  \
+    botler_service_content="[Unit]
+        \nDescription=Starts Botler after a crash or system reboot
+        \nAfter=network.target postgresql-12.service 
+        \n
+        \n[Service]
+        \nUser=botler
+        \nWorkingDirectory=$bottius_root_dir
+        \nExecStart=/usr/bin/node out/main.js
+        \n#ExecStart=/usr/bin/node $bottius_root_dir/out/main.js
+        \nRestart=always
+        \nRestartSec=3
+        \nStandardOutput=syslog 
+        \nStandardError=syslog
+        \nSyslogIdentifier=botler
+        \n
+        \n[Install]
         \nWantedBy=multi-user.target"
 
 #
@@ -93,6 +89,7 @@
 ################################################################################
 #
     echo -e "Welcome to the Botler installer\n"
+
     while true; do
         # TODO: Numerics for $botler_service_status like $botler_service_startup???
         botler_service_status=$(systemctl is-active botler.service)
@@ -103,7 +100,6 @@
         database_exist=$(sudo -u postgres -H sh -c "psql postgres -tAc \
             \"SELECT 1 FROM pg_database WHERE datname='Botler_DB'\"" 2>/dev/null)
         pgsql_auth_type=$(grep -P "^host.*all.*all.*(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2])).*ident$" /var/lib/pgsql/12/data/pg_hba.conf 2>/dev/null) # CentOS/RHEL
-
 
         ########################################################################
         # Makes sure that the system user 'botler' and the home directory
@@ -167,7 +163,6 @@
             systemctl daemon-reload
         fi
 
-
         ########################################################################
         # User options for installing perquisites and downloading Botler
         ########################################################################
@@ -187,7 +182,7 @@
                     export botler_service_content
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$master_installer"
+                    exec "$installer_prep"
                     ;;
                 2)
                     clean_exit "0" "Exiting"
@@ -261,7 +256,7 @@
                     export botler_service_content
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$master_installer"
+                    exec "$installer_prep"
                     ;;
                 2)
                     clear -x
@@ -313,8 +308,9 @@
                         continue
                     }
 
-                    echo -e "\n${cyan}If there are any errors, resolve whatever issue is" \
-                        "causing them, then attempt to compile the code again\n${nc}"
+                    echo -e "\n${cyan}If there are any errors, resolve whatever" \
+                        "issue is causing them, then attempt to compile the" \
+                        "code again\n${nc}"
 
                     read -p "Press [Enter] to return to the installer menu"
                     clear -x
@@ -348,7 +344,7 @@
                     else
                         sudo -u postgres -H sh -c "createdb -O Botler Botler_DB" || {
                             echo "${red}Failed to create a database for Botler${nc}" >&2
-                            create_failed="true"
+                            create_failed=true
                         }
                     fi
 
@@ -362,8 +358,8 @@
                             echo "Restarting postgresql-12..."
                             systemctl restart postgresql-12 || {
                                 echo "${red}Failed to restart postgresql-12" >&2
-                                echo "${cyan}You will need to manually restart it" \
-                                    "to apply any changes to the config files"
+                                echo "${cyan}You will need to manually restart" \
+                                    "it to apply any changes to the config files"
                             }
                         fi
                     else 
@@ -388,7 +384,6 @@
                     continue
                     ;;
             esac
-
 
         ########################################################################
         # User options for starting Botler
@@ -438,7 +433,7 @@
                     export botler_service_content
                     wget -qN https://raw.githubusercontent.com/Botler-Dev/Installer/$installer_branch/download-update.sh
                     chmod +x download-update.sh && ./download-update.sh
-                    exec "$master_installer"
+                    exec "$installer_prep"
                     ;;
                 2)
                     clear -x

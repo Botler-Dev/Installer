@@ -52,9 +52,9 @@
             chown botler:botler -R "$home"
         fi
 
-        if [[ $1 = "true" ]]; then
+        if [[ $1 = true ]]; then
             echo "Killing parent processes..."
-            kill -9 "$sub_master_installer_pid" "$master_installer_pid"
+            kill -9 "$linux_master_installer_pid" "$installer_prep_pid"
             echo "Exiting..."
             exit 1
         fi
@@ -70,7 +70,6 @@
     printf "We will now download/update Botler. "
     read -p "Press [Enter] to begin."
     
-
     ############################################################################
     # Error trapping
     ############################################################################
@@ -78,11 +77,10 @@
     trap "echo -e \"\n\nScript forcefully stopped\"
         clean_up
         echo \"Killing parent processes...\"
-        kill -9 \"$sub_master_installer_pid\" \"$master_installer_pid\"
+        kill -9 \"$linux_master_installer_pid\" \"$installer_prep_pid\"
         echo \"Exiting...\"
         exit 1" \
         SIGINT SIGTSTP SIGTERM
-
 
     ############################################################################
     # Prepping
@@ -91,7 +89,7 @@
         # B.1. $botler_service_active = true when 'botler.service' is
         # active, and is used to indicate to the user that the service was
         # stopped and that they will need to start it
-        botler_service_active="true"
+        botler_service_active=true
         echo "Stopping 'botler.service'..."
         systemctl stop botler.service || {
             echo "${red}Failed to stop 'botler.service'" >&2
@@ -100,13 +98,11 @@
         }
     fi
 
-
     ############################################################################
     # Checking for required software/applications
     ############################################################################
     required_software "curl"
     required_software "wget"
-
 
     ############################################################################
     # Creating backups of current code in '/home/botler' then downloads/
@@ -239,7 +235,6 @@
         echo "${red}Failed to $create_or_update 'botler.service'${nc}" >&2
         b_s_update="Failed"
     }
-
 
     ############################################################################
     # Cleaning up and presenting results...

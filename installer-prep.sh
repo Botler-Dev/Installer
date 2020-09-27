@@ -37,8 +37,8 @@
         export no_hostname="--no-hostname"
     fi
 
-    export master_installer="/home/botler/installer-prep.sh"
-    export master_installer_pid=$$
+    export installer_prep="/home/botler/installer-prep.sh"
+    export installer_prep_pid=$$
 
 #
 ################################################################################
@@ -52,7 +52,7 @@
             "postgres-installer.sh" "botconfig-setup.sh" "postgres-open-close.sh"
             "download-update.sh" "installer-prep.sh")
 
-        if [[ $3 = "true" ]]; then echo "Cleaning up..."; else echo -e "\nCleaning up..."; fi
+        if [[ $3 = true ]]; then echo "Cleaning up..."; else echo -e "\nCleaning up..."; fi
         for file in "${installer_files[@]}"; do
             if [[ -f $file ]]; then rm "$file"; fi
         done
@@ -135,36 +135,22 @@
 
         # Identifying bit type
         case $(uname -m) in
-            x86_64)
-                bits="64"
-                ;;
-            i*86)
-                bits="32"
-                ;;
-            armv*)
-                bits="32"
-                ;;
-            *)
-                bits="?"
-                ;;
+            x86_64) bits="64" ;;
+            i*86) bits="32" ;;
+            armv*) bits="32" ;;
+            *) bits="?" ;;
         esac
 
         # Identifying architecture type
         case $(uname -m) in
-            x86_64)
-                arch="x64"  # or AMD64 or Intel64 or whatever
-                ;;
-            i*86)
-                arch="x86"  # or IA32 or Intel32 or whatever
-                ;;
-            *)
-                arch="?"
-                ;;
+            x86_64) arch="x64" ;;
+            i*86) arch="x86" ;;
+            *) arch="?" ;;
         esac
     }
 
-    execute_sub_master_installer(){
-        supported="true"
+    execute_linux_master_installer(){
+        supported=true
         export pkg_mng=$1
         #echo "Downloading 'linux-master-installer.sh'..."
         while true; do
@@ -210,58 +196,38 @@
         # B.1. Forcing 64 bit architecture
         if [[ $bits = 64 ]]; then 
             case "$ver" in
-                16.04)
-                    execute_sub_master_installer "apt"
-                    ;;
-                18.04)
-                    execute_sub_master_installer "apt"
-                    ;;
-                20.04)
-                    execute_sub_master_installer "apt"
-                    ;;
-                *)
-                    supported="false"
-                    ;;
+                16.04) execute_linux_master_installer "apt" ;;
+                18.04) execute_linux_master_installer "apt" ;;
+                20.04) execute_linux_master_installer "apt" ;;
+                *) supported=false ;;
             esac
         else
-            supported="false"
+            supported=false
         fi
     elif [[ $distro = "debian" ]]; then
         if [[ $bits = 64 ]]; then # B.1.
             case "$sver" in
-                9)
-                    execute_sub_master_installer "apt"
-                    ;;
-                10)
-                    execute_sub_master_installer "apt"
-                    ;;
-                *)
-                    supported="false"
-                    ;;
+                9) execute_linux_master_installer "apt" ;;
+                10) execute_linux_master_installer "apt" ;;
+                *) supported=false ;;
             esac
         else
-            supported="false"
+            supported=false
         fi
     elif [[ $distro = "rhel" || $distro = "centos" ]]; then
         if [[ $bits = 64 ]]; then # B.1.
             case "$sver" in
-                7)
-                    execute_sub_master_installer "yum"
-                    ;;
-                8)
-                    execute_sub_master_installer "dnf"
-                    ;;
-                *)
-                    supported="false"
-                    ;;
+                7) execute_linux_master_installer "yum" ;;
+                8) execute_linux_master_installer "dnf" ;;
+                *) supported=false ;;
             esac
         fi
     else
-        supported="false"
+        supported=false
     fi
         
-    if [[ $supported = "false" ]]; then
-        echo "${red}Your operating system/Linux Distribution is not supported" \
-            "by the installation, setup, and/or use of Botler${nc}" >&2
+    if [[ $supported = false ]]; then
+        echo "${red}Your operating system/Linux Distribution is not officially" \
+            "supported by the installation, setup, and/or use of Botler${nc}" >&2
         clean_exit "1" "Exiting" "true"
     fi
